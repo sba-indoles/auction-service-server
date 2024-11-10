@@ -4,14 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import org.indoles.autionserviceserver.core.auction.domain.ConstantPricePolicy;
+import org.indoles.autionserviceserver.core.auction.domain.PercentagePricePolicy;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
 import org.indoles.autionserviceserver.core.auction.entity.enums.PricePolicyType;
 import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionException;
 
 import java.io.IOException;
 
-
-import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionExceptionCode;
+import static org.indoles.autionserviceserver.core.auction.entity.exception.AuctionExceptionCode.*;
 
 @Converter
 public class PricePolicyConverter implements AttributeConverter<PricePolicy, String> {
@@ -26,7 +27,7 @@ public class PricePolicyConverter implements AttributeConverter<PricePolicy, Str
         try {
             return objectMapper.writeValueAsString(pricePolicy);
         } catch (IOException e) {
-            throw new AuctionException(AuctionExceptionCode.CONVERT_TO_STRING_ERROR, e);
+            throw new AuctionException(CONVERT_TO_STRING_ERROR, e);
         }
     }
 
@@ -42,14 +43,13 @@ public class PricePolicyConverter implements AttributeConverter<PricePolicy, Str
             return switch (type) {
                 case PERCENTAGE -> objectMapper.treeToValue(jsonNode, PercentagePricePolicy.class);
                 case CONSTANT -> objectMapper.treeToValue(jsonNode, ConstantPricePolicy.class);
-                default -> throw new AuctionException(AuctionExceptionCode.CONVERT_TO_INVALID_TYPE);
+                default -> throw new AuctionException(CONVERT_TO_INVALID_TYPE);
             };
 
         } catch (IOException e) {
-            throw new AuctionException(AuctionExceptionCode.CONVERT_TO_FAILED_PRICE_POLICY_TYPE, e);
+            throw new AuctionException(CONVERT_TO_FAILED_PRICE_POLICY_TYPE, e);
         } catch (IllegalArgumentException e) {
-            throw new AuctionException(AuctionExceptionCode.CONVERT_TO_INVALID_PRICE_POLICY_TYPE);
+            throw new AuctionException(CONVERT_TO_INVALID_PRICE_POLICY_TYPE, e);
         }
-        return null;
     }
 }
