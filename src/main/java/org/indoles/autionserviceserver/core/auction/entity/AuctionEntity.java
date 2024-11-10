@@ -1,22 +1,21 @@
 package org.indoles.autionserviceserver.core.auction.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
+import lombok.*;
+
 import java.time.Duration;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
 import org.indoles.autionserviceserver.core.auction.entity.utils.PricePolicyConverter;
-import org.indoles.autionserviceserver.global.entity.BaseEntity;
 
 @Getter
 @Entity
 @Table(name = "AUCTION")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AuctionEntity extends BaseEntity {
+public class AuctionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +48,15 @@ public class AuctionEntity extends BaseEntity {
     @NotNull
     private Duration variationDuration;
 
+    @NonNull
+    private boolean isShowStock;
+
+    @NotNull
+    private LocalDateTime startedAt;
+
+    @NotNull
+    private LocalDateTime finishedAt;
+
     @Builder
     private AuctionEntity(
             Long id,
@@ -60,7 +68,10 @@ public class AuctionEntity extends BaseEntity {
             Long currentStock,
             Long maximumPurchaseLimitCount,
             PricePolicy pricePolicy,
-            Duration variationDuration
+            Duration variationDuration,
+            LocalDateTime startedAt,
+            LocalDateTime finishedAt,
+            boolean isShowStock
     ) {
         this.id = id;
         this.sellerId = sellerId;
@@ -72,9 +83,12 @@ public class AuctionEntity extends BaseEntity {
         this.maximumPurchaseLimitCount = maximumPurchaseLimitCount;
         this.pricePolicy = pricePolicy;
         this.variationDuration = variationDuration;
+        this.startedAt = startedAt;
+        this.finishedAt = finishedAt;
+        this.isShowStock = isShowStock;
     }
 
-    public Auction toDomain(){
+    public Auction toDomain() {
         return Auction.builder()
                 .id(this.id)
                 .sellerId(this.sellerId)
@@ -86,6 +100,9 @@ public class AuctionEntity extends BaseEntity {
                 .maximumPurchaseLimitCount(this.maximumPurchaseLimitCount)
                 .pricePolicy(this.pricePolicy)
                 .variationDuration(this.variationDuration)
+                .isShowStock(this.isShowStock)
+                .startedAt(this.startedAt)
+                .finishedAt(this.finishedAt)
                 .build();
     }
 }

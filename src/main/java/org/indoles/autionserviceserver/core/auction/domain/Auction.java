@@ -7,7 +7,6 @@ import org.indoles.autionserviceserver.core.auction.domain.enums.AuctionStatus;
 import org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionException;
-import org.indoles.autionserviceserver.global.entity.BaseEntity;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -143,6 +142,9 @@ public class Auction {
                 .maximumPurchaseLimitCount(auction.getMaximumPurchaseLimitCount())
                 .pricePolicy(auction.getPricePolicy())
                 .variationDuration(auction.getVariationDuration())
+                .isShowStock(auction.getIsShowStock())
+                .startedAt(auction.getStartedAt())
+                .finishedAt(auction.getFinishedAt())
                 .build();
     }
 }
