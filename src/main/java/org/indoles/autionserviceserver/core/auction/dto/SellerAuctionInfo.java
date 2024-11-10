@@ -1,5 +1,6 @@
 package org.indoles.autionserviceserver.core.auction.dto;
 
+import lombok.Builder;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
 
 import java.time.Duration;
@@ -24,6 +25,7 @@ import static org.indoles.autionserviceserver.core.auction.domain.validate.Valid
  * @param isShowStock               재고를 보여줄지 여부
  */
 
+@Builder
 public record SellerAuctionInfo(
         Long auctionId,
         String productName,

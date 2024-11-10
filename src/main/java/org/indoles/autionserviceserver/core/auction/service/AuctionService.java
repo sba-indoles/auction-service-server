@@ -164,6 +164,21 @@ public class AuctionService {
      * return 판매자용 경매 정보
      */
 
+    public SellerAuctionInfo getSellerAuction(Long auctionId) {
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
+
+        Auction auction = auctionEntity.toDomain();
+
+        return Mapper.convertToSellerAuctionInfo(auction);
+    }
+
+    /**
+     * 구매한 경매에 대해 조회하는 서비스 로직(구매자용)
+     *
+     * @param auctionId return 구매자용 경매 정보
+     */
+
     public BuyerAuctionInfo getBuyerAuction(Long auctionId) {
         AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
                 .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
@@ -171,16 +186,6 @@ public class AuctionService {
         Auction auction = auctionEntity.toDomain();
 
         return Mapper.convertToBuyerAuctionInfo(auction);
-    }
-
-    /**
-     * 구매한 경매에 대해 조회하는 서비스 로직(구매자용)
-     *
-     * @param auctionCondition return 구매자용 경매 정보
-     */
-
-    public List<BuyerAuctionSimpleInfo> getBuyerAuctionSimpleInfos(AuctionSearchCondition auctionCondition) {
-
     }
 
     /**

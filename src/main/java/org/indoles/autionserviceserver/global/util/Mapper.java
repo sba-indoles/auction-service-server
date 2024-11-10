@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.dto.AuctionInfo;
 import org.indoles.autionserviceserver.core.auction.dto.BuyerAuctionInfo;
+import org.indoles.autionserviceserver.core.auction.dto.SellerAuctionInfo;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Mapper {
@@ -42,6 +43,23 @@ public class Mapper {
                 .variationDuration(auction.getVariationDuration())
                 .startedAt(auction.getStartedAt())
                 .finishedAt(auction.getFinishedAt())
+                .build();
+    }
+
+    public static SellerAuctionInfo convertToSellerAuctionInfo(Auction auction) {
+        return SellerAuctionInfo.builder()
+                .auctionId(auction.getId())
+                .productName(auction.getProductName())
+                .originPrice(auction.getOriginPrice())
+                .currentPrice(auction.getCurrentPrice())
+                .originStock(auction.getOriginStock())
+                .currentStock(auction.getCurrentStock())
+                .maximumPurchaseLimitCount(auction.getMaximumPurchaseLimitCount())
+                .pricePolicy(auction.getPricePolicy())
+                .variationDuration(auction.getVariationDuration())
+                .startedAt(auction.getStartedAt())
+                .finishedAt(auction.getFinishedAt())
+                .isShowStock(auction.isShowStock())
                 .build();
     }
 
