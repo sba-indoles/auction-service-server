@@ -29,8 +29,9 @@ public enum AuctionExceptionCode implements ExceptionCode {
     AUCTION_VARIATION_WIDTH_INVALID(BAD_REQUEST, "AUC-016", "가격 변동폭은 0원 이상이어야 합니다."),
     INVALID_DISCOUNT_CONSTANT_RATE(BAD_REQUEST, "AUC-017", "상품 원가는 가격 변동폭보다 커야 합니다."),
     INVALID_INPUT(BAD_REQUEST, "AUC-018", "입력값이 유효하지 않습니다."),
-    CANNOT_CANCEL_AUCTION(BAD_REQUEST, "AUC-019", "경매를 취소할 수 없습니다."),
+    CANNOT_CANCEL_AUCTION(BAD_REQUEST, "AUC-019", "시작전인 경매만 취소할 수 없습니다."),
     UNAUTHORIZED_SELLER(BAD_REQUEST, "AUC-020", "판매자가 아닙니다."),
+    AUCTION_NOT_FOUND(NOT_FOUND, "AUC-021", "해당 경매를 찾을 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;
