@@ -8,11 +8,12 @@ public class ValidatePercentPrice {
 
     /**
      * 할인율 유효성 검사
+     *
      * @param discountPercent
      * @throws AuctionException
      */
 
-    public static void validateDiscountRate(double discountPercent){
+    public static void validateDiscountRate(double discountPercent) {
 
         final double MINIMUM_RATE = 0.0;
         final double MAXIMUM_RATE = 50.0;

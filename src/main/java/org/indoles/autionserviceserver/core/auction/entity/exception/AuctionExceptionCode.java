@@ -26,6 +26,8 @@ public enum AuctionExceptionCode implements ExceptionCode {
     INVALID_PURCHASE_QUANTITY(BAD_REQUEST, "AUC-013", "구매할 수량이 유효하지 않습니다."),
     STOCK_NOT_ENOUGH(BAD_REQUEST, "AUC-014", "재고가 부족합니다."),
     INVALID_DISCOUNT_PERCENT_RATE(BAD_REQUEST, "AUC-015", "할인율은 0% 이상 50% 이하여야 합니다."),
+    AUCTION_VARIATION_WIDTH_INVALID(BAD_REQUEST, "AUC-016", "가격 변동폭은 0원 이상이어야 합니다."),
+    INVALID_DISCOUNT_CONSTANT_RATE(BAD_REQUEST, "AUC-017", "상품 원가는 가격 변동폭보다 커야 합니다."),
     ;
 
     private final HttpStatus httpStatus;
