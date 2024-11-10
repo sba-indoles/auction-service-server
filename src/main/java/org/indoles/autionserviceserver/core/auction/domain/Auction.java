@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.domain.enums.AuctionStatus;
 import org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction;
+import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionException;
-import org.indoles.autionserviceserver.global.entity.BaseEntity;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -128,5 +128,23 @@ public class Auction {
 
     public boolean isSeller(Long sellerId) {
         return this.sellerId.equals(sellerId);
+    }
+
+    public static AuctionEntity toEntity(Auction auction) {
+        return AuctionEntity.builder()
+                .id(auction.getId())
+                .sellerId(auction.getSellerId())
+                .productName(auction.getProductName())
+                .originPrice(auction.getOriginPrice())
+                .currentPrice(auction.getCurrentPrice())
+                .originStock(auction.getOriginStock())
+                .currentStock(auction.getCurrentStock())
+                .maximumPurchaseLimitCount(auction.getMaximumPurchaseLimitCount())
+                .pricePolicy(auction.getPricePolicy())
+                .variationDuration(auction.getVariationDuration())
+                .isShowStock(auction.getIsShowStock())
+                .startedAt(auction.getStartedAt())
+                .finishedAt(auction.getFinishedAt())
+                .build();
     }
 }

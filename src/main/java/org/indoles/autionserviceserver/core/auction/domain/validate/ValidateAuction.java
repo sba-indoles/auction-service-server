@@ -1,10 +1,10 @@
 package org.indoles.autionserviceserver.core.auction.domain.validate;
 
-import org.apache.coyote.BadRequestException;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
 import org.indoles.autionserviceserver.core.auction.domain.enums.AuctionStatus;
 import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionException;
+import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionExceptionCode;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ import static org.indoles.autionserviceserver.core.auction.entity.exception.Auct
 
 public class ValidateAuction {
 
-    private static final int MINUMUM_STOCK_COUNT = 1;
+    private static final int MINIMUM_STOCK_COUNT = 1;
     private static final long NANOS_IN_MINUTE = 60_000_000_000L; // 1분의 나노초
     private static final long MAX_AUCTION_DURATION_NANOS = 60 * NANOS_IN_MINUTE; // 60분의 나노초
 
@@ -88,17 +88,18 @@ public class ValidateAuction {
 
     /**
      * 재고 유효성 검사
+     *
      * @param currentStock
      * @param refundStockAmount
-     * @Param originStock
      * @throws AuctionException
+     * @Param originStock
      */
 
     public static void validateStock(long currentStock, long refundStockAmount, long originStock) {
         long newCurrentStock = currentStock + refundStockAmount;
 
-        if (refundStockAmount < MINUMUM_STOCK_COUNT) {
-            throw new AuctionException(AUCTION_MINIMUM_REFUND_STOCK_REQUIRED, MINUMUM_STOCK_COUNT, refundStockAmount);
+        if (refundStockAmount < MINIMUM_STOCK_COUNT) {
+            throw new AuctionException(AUCTION_MINIMUM_REFUND_STOCK_REQUIRED, MINIMUM_STOCK_COUNT, refundStockAmount);
         }
 
         if (newCurrentStock > originStock) {
@@ -108,6 +109,7 @@ public class ValidateAuction {
 
     /**
      * 경매 상태 유효성 검사
+     *
      * @param price
      * @param quantity
      * @param requestTime
@@ -125,6 +127,7 @@ public class ValidateAuction {
 
     /**
      * 현재 경매 상태 반환
+     *
      * @param requestTime
      * @return AuctionStatus
      */
@@ -159,6 +162,99 @@ public class ValidateAuction {
         }
         if (auction.getCurrentStock() < quantity) {
             throw new AuctionException(STOCK_NOT_ENOUGH, auction.getCurrentStock(), quantity);
+        }
+    }
+
+    public static void validateProductName(String productName) {
+        if (productName.trim().isEmpty()) {
+            throw new AuctionException(INVALID_INPUT);
+        }
+    }
+
+    public static void validateOriginPrice(long originPrice) {
+        if (originPrice <= 0) {
+            throw new AuctionException(INVALID_INPUT, originPrice);
+        }
+    }
+
+    public static void validateMaximumPurchaseLimitCount(long maximumPurchaseLimitCount) {
+        if (maximumPurchaseLimitCount <= 0) {
+            throw new AuctionException(INVALID_INPUT, maximumPurchaseLimitCount);
+        }
+    }
+
+    public static void validateVariationDuration(Duration variationDuration) {
+        if (variationDuration.isNegative() || variationDuration.isZero()) {
+            throw new AuctionException(INVALID_INPUT, variationDuration);
+        }
+    }
+
+    public static void validateStartedAt(LocalDateTime nowAt, LocalDateTime startedAt) {
+        if (startedAt.isBefore(nowAt)) {
+            throw new AuctionException(INVALID_INPUT, startedAt);
+        }
+    }
+
+    public static void validateStock(long stock, long maximumPurchaseLimitCount) {
+        if (stock < maximumPurchaseLimitCount) {
+            throw new AuctionException(INVALID_INPUT, stock, maximumPurchaseLimitCount);
+        }
+    }
+
+    public static void validateCancelAuction(Auction auction, LocalDateTime requestTime) {
+        if (!auction.currentStatus(requestTime).isWaiting()) {
+            throw new AuctionException(CANNOT_CANCEL_AUCTION);
+        }
+    }
+
+    public static void validateStock(long stock) {
+        if (stock < 0) {
+            throw new AuctionException(STOCK_NOT_ENOUGH, stock);
+        }
+    }
+
+    public static void validateCurrentPrice(long currentPrice) {
+        if (currentPrice <= 0) {
+            throw new AuctionException(AUCTION_MINIMUM_PRICE);
+        }
+    }
+
+    /**
+     * 경매 상품에 대해서 조회할 때의 유효성 검사
+     *
+     * @param from
+     * @param to
+     * @param size
+     */
+
+    public static void validateSizeBetween(int from, int to, int size) {
+        if (size < from || size > to) {
+            throw new AuctionException(AuctionExceptionCode.INVALID_INPUT,
+                    "size는 " + from + " 이상 " + to + " 이하의 값이어야 합니다. 현재 요청: " + size);
+        }
+    }
+
+    public static void validateOriginStock(long originStock) {
+        if (originStock <= 0) {
+            throw new AuctionException(AuctionExceptionCode.INVALID_INPUT, originStock);
+        }
+    }
+
+    public static void validateCurrentStock(long currentStock) {
+        if (currentStock < 0) {
+            throw new AuctionException(AuctionExceptionCode.INVALID_INPUT, currentStock);
+        }
+    }
+
+    /**
+     * 경매 DTO에서 공통적으로 사용되는 유효성 검사
+     *
+     * @param value
+     * @param fieldName
+     */
+    public static void validateNotNull(Object value, String fieldName) {
+        if (value == null) {
+            throw new AuctionException(AuctionExceptionCode.INVALID_INPUT, fieldName + "는 Null일 수 없습니다.");
         }
     }
 }
