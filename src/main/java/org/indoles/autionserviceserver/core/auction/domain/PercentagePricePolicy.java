@@ -21,6 +21,6 @@ public class PercentagePricePolicy implements PricePolicy {
 
     @Override
     public PricePolicyType getType() {
-        return null;
+        return pricePolicyType;
     }
 }
