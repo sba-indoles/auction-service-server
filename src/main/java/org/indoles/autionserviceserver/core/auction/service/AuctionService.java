@@ -199,7 +199,7 @@ public class AuctionService {
     public List<SellerAuctionSimpleInfo> getSellerAuctionSimpleInfos(SellerAuctionSearchCondition condition) {
         return auctionRepository.findAllBySellerId(condition.sellerId(), condition.getPageable())
                 .stream()
-                .map(AuctionEntity::toDomain) // AuctionEntity를 Auction으로 변환
+                .map(AuctionEntity::toDomain)
                 .map(auction -> new SellerAuctionSimpleInfo(
                         auction.getId(),
                         auction.getProductName(),
