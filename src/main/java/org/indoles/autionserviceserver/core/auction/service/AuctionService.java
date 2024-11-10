@@ -13,6 +13,7 @@ import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionExce
 import org.indoles.autionserviceserver.core.auction.repository.AuctionRepository;
 import org.indoles.autionserviceserver.core.member.dto.response.SignInInfo;
 import org.indoles.autionserviceserver.core.member.entity.enums.Role;
+import org.indoles.autionserviceserver.global.util.Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,6 +149,12 @@ public class AuctionService {
      */
 
     public AuctionInfo getAuction(Long auctionId) {
+        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
+
+        Auction auction = auctionEntity.toDomain();
+
+        return Mapper.convertToAuctionInfo(auction);
     }
 
     /**

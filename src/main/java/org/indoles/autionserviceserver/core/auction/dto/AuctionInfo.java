@@ -1,5 +1,6 @@
 package org.indoles.autionserviceserver.core.auction.dto;
 
+import lombok.Builder;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
 import org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction;
 
@@ -25,6 +26,7 @@ import static org.indoles.autionserviceserver.core.auction.domain.validate.Valid
  *
  */
 
+@Builder
 public record AuctionInfo(
         Long auctionId,
         Long sellerId,
@@ -37,7 +39,7 @@ public record AuctionInfo(
         Duration variationDuration,
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
-        boolean isShowStock
+        Boolean isShowStock
 ) {
 
     public AuctionInfo {

@@ -27,7 +27,7 @@ public class Auction {
     private Long maximumPurchaseLimitCount;
     private PricePolicy pricePolicy;
     private Duration variationDuration;
-    private Boolean isShowStock;
+    private boolean isShowStock;
     private LocalDateTime startedAt;
     private LocalDateTime finishedAt;
 
