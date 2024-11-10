@@ -57,5 +57,6 @@ sonar {
         property "sonar.projectKey", "sba-fourMan_auction-service-server"
         property "sonar.organization", "auction-apigateway"
         property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.branch.name", System.getenv("dev")
     }
 }
