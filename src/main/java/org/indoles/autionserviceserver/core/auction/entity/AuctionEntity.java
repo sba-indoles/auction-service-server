@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
 import org.indoles.autionserviceserver.core.auction.entity.utils.PricePolicyConverter;
 import org.indoles.autionserviceserver.global.entity.BaseEntity;
@@ -72,7 +73,7 @@ public class AuctionEntity extends BaseEntity {
         this.pricePolicy = pricePolicy;
         this.variationDuration = variationDuration;
     }
-    /*
+
     public Auction toDomain(){
         return Auction.builder()
                 .id(this.id)
@@ -87,6 +88,4 @@ public class AuctionEntity extends BaseEntity {
                 .variationDuration(this.variationDuration)
                 .build();
     }
-
-     */
 }
