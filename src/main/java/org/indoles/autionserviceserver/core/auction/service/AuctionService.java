@@ -157,11 +157,16 @@ public class AuctionService {
     /**
      * 판매한 경매에 대해 조회하는 서비스 로직(판매자용)
      *
-     * @param auctionId 경매 ID
-     *                  return 판매자용 경매 정보
+     * @param sellerInfo
+     * @param auctionId  경매 ID
+     *                   return 판매자용 경매 정보
      */
 
-    public SellerAuctionInfo getSellerAuction(Long auctionId) {
+    public SellerAuctionInfo getSellerAuction(SignInInfo sellerInfo, Long auctionId) {
+        if (!sellerInfo.isType(Role.SELLER)) {
+            throw new AuctionException(UNAUTHORIZED_SELLER);
+        }
+
         AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
                 .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
 
