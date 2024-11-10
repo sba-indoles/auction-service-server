@@ -176,4 +176,8 @@ gradle-app.setting
 # Java heap dump
 *.hprof
 
+# application 설정 파일
+/src/main/resources/application-local.yml
+/src/main/resources/application-test.yml
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,macos,gradle,java
