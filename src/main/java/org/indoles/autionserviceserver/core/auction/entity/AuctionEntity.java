@@ -57,6 +57,9 @@ public class AuctionEntity {
     @NotNull
     private LocalDateTime finishedAt;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     @Builder
     private AuctionEntity(
             Long id,
@@ -104,5 +107,9 @@ public class AuctionEntity {
                 .startedAt(this.startedAt)
                 .finishedAt(this.finishedAt)
                 .build();
+    }
+
+    public void update() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
