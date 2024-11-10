@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.controller.SellerAuctionController;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
+import org.indoles.autionserviceserver.core.auction.domain.enums.AuctionStatus;
+import org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction;
 import org.indoles.autionserviceserver.core.auction.dto.AuctionSearchCondition;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
@@ -14,6 +16,7 @@ import org.indoles.autionserviceserver.core.member.entity.enums.Role;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.indoles.autionserviceserver.core.auction.entity.exception.AuctionExceptionCode.*;
@@ -81,9 +84,12 @@ public class AuctionService {
         if(!auction.currentStatus(cancelAuctionCommand.requestTime()).isWaiting()) {
             throw new AuctionException(CANNOT_CANCEL_AUCTION);
         }
+
+        AuctionEntity auctionEntity = Auction.toEntity(auction);
+        auctionRepository.deleteById(auctionEntity.getId());
     }
 
-    private AuctionEntity findAuctionObject(Long auctionId) {
+    public AuctionEntity findAuctionObject(Long auctionId) {
         return auctionRepository.findById(auctionId)
                 .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
     }
@@ -97,7 +103,12 @@ public class AuctionService {
      */
 
     @Transactional
-    public void submitPurchase(Long auctionId, Long price, Long quantity, Long requestTime) {
+    public void submitPurchase(Long auctionId, Long price, Long quantity, LocalDateTime requestTime) {
+
+        Auction auction = findAuctionObject(auctionId).toDomain();
+        auction.submit(price, quantity, requestTime);
+        AuctionEntity auctionEntity = Auction.toEntity(auction);
+        auctionRepository.save(auctionEntity);
     }
 
     /**
