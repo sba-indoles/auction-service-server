@@ -12,11 +12,9 @@ public interface AuctionRepository extends JpaRepository<AuctionEntity, Long> {
 
     Optional<AuctionEntity> findById(Long id);
 
-    Page<AuctionEntity> findAllById(long auctionId, Pageable pageable);
-
+    Page<AuctionEntity> findAll(Pageable pageable);
 
     Page<AuctionEntity> findAllBySellerId(long sellerId, Pageable pageable);
-
 
     Optional<AuctionEntity> findByIdAndUpdatedAt(Long auctionId, LocalDateTime updatedAt);
 }

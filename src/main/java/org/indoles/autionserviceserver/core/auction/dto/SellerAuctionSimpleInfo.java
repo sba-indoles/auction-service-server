@@ -16,12 +16,12 @@ import java.time.LocalDateTime;
  */
 
 public record SellerAuctionSimpleInfo(
-        long id,
+        Long id,
         String title,
-        long originPrice,
-        long currentPrice,
-        long totalStock,
-        long currentStock,
+        Long originPrice,
+        Long currentPrice,
+        Long totalStock,
+        Long currentStock,
         LocalDateTime startedAt,
         LocalDateTime finishedAt
 ) {

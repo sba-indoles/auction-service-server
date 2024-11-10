@@ -7,6 +7,9 @@ package org.indoles.autionserviceserver.core.auction.dto;
  * @param size     조회 개수
  */
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.validateSizeBetween;
 
 public record SellerAuctionSearchCondition(
@@ -16,5 +19,10 @@ public record SellerAuctionSearchCondition(
 ) {
     public SellerAuctionSearchCondition {
         validateSizeBetween(1, 100, size);
+    }
+
+    public Pageable getPageable() {
+        int pageNumber = offset / size;
+        return PageRequest.of(pageNumber, size);
     }
 }

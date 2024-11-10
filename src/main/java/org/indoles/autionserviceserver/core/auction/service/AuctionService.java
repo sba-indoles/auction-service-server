@@ -2,10 +2,7 @@ package org.indoles.autionserviceserver.core.auction.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.indoles.autionserviceserver.core.auction.controller.SellerAuctionController;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
-import org.indoles.autionserviceserver.core.auction.domain.enums.AuctionStatus;
-import org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction;
 import org.indoles.autionserviceserver.core.auction.dto.AuctionSearchCondition;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
@@ -161,7 +158,7 @@ public class AuctionService {
      * 판매한 경매에 대해 조회하는 서비스 로직(판매자용)
      *
      * @param auctionId 경매 ID
-     * return 판매자용 경매 정보
+     *                  return 판매자용 경매 정보
      */
 
     public SellerAuctionInfo getSellerAuction(Long auctionId) {
@@ -191,11 +188,24 @@ public class AuctionService {
     /**
      * 경매 목록을 조회하는 서비스 로직(판매자용)
      *
-     * @param auctionCondition return 판매자용 경매 정보
+     * @param condition return 판매자용 경매 정보
      */
 
-    public List<SellerSimpleInfo> getSellerAuctionSimpleInfos(SellerAuctionController auctionCondition) {
-
+    public List<SellerAuctionSimpleInfo> getSellerAuctionSimpleInfos(SellerAuctionSearchCondition condition) {
+        return auctionRepository.findAllBySellerId(condition.sellerId(), condition.getPageable())
+                .stream()
+                .map(AuctionEntity::toDomain) // AuctionEntity를 Auction으로 변환
+                .map(auction -> new SellerAuctionSimpleInfo(
+                        auction.getId(),
+                        auction.getProductName(),
+                        auction.getOriginPrice(),
+                        auction.getCurrentPrice(),
+                        auction.getOriginStock(),
+                        auction.getCurrentStock(),
+                        auction.getStartedAt(),
+                        auction.getFinishedAt()
+                ))
+                .toList();
     }
 
     /**
@@ -205,42 +215,16 @@ public class AuctionService {
      */
 
     public List<BuyerAuctionSimpleInfo> getBuyerAuctionSimpleInfos(AuctionSearchCondition auctionCondition) {
-
+        return auctionRepository.findAll(auctionCondition.getPageable())
+                .stream()
+                .map(AuctionEntity::toDomain)
+                .map(auction -> new BuyerAuctionSimpleInfo(
+                        auction.getId(),
+                        auction.getProductName(),
+                        auction.getCurrentPrice(),
+                        auction.getStartedAt(),
+                        auction.getFinishedAt()
+                ))
+                .toList();
     }
-
-
-//  public List<BuyerAuctionSimpleInfo> getBuyerAuctionSimpleInfos(AuctionSearchCondition condition) {
-//    }
-
-//    public BuyerAuctionInfo getBuyerAuction(Long auctionId) {
-//    }
-
-//    @Transactional
-//    public void cancelAuction(SignInInfo signInInfo, CancelAuctionCommand cancelAuctionCommand) {
-//        try {
-//            cancelAuctionCommand.validate();
-//
-//            if (!signInInfo.isType(SELLER)) {
-//            throw new AuctionException(AuctionExceptionCode.UNAUTHORIZED_SELLER);
-//            }
-//
-//            Auction auction = findAuctionObject(cancelAuctionCommand.auctionId());
-//
-//            if (!auction.isSeller(signInInfo.id())) {
-//                throw new AuthorizationException("자신이 등록한 경매만 취소할 수 있습니다.", ErrorCode.A018);
-//            }
-//
-//            // 경매 상태 유효성 검사
-//            if (!auction.currentStatus(cancelAuctionCommand.requestTime()).isWaiting()) {
-//                String message = String.format("시작 전인 경매만 취소할 수 있습니다. 시작시간=%s, 요청시간=%s", auction.getStartedAt(),
-//                        cancelAuctionCommand.requestTime());
-//                throw new BadRequestException(message, ErrorCode.A019);
-//            }
-//
-//            auctionRepository.deleteById(cancelAuctionCommand.auctionId());
-//        } catch (Exception e) {
-//            log.error("경매 물품 취소 중 오류 발생", e);
-//            throw e;
-//        }
-//    }
 }

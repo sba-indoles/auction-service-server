@@ -13,7 +13,7 @@ import static org.indoles.autionserviceserver.core.auction.domain.validate.Valid
 
 public record CancelAuctionCommand(
         LocalDateTime requestTime,
-        long auctionId
+        Long auctionId
 ) {
     public CancelAuctionCommand {
         validateNotNull(requestTime, "requestTime");

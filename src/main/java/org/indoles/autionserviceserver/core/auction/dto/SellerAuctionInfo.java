@@ -29,16 +29,16 @@ import static org.indoles.autionserviceserver.core.auction.domain.validate.Valid
 public record SellerAuctionInfo(
         Long auctionId,
         String productName,
-        long originPrice,
-        long currentPrice,
-        long originStock,
-        long currentStock,
-        long maximumPurchaseLimitCount,
+        Long originPrice,
+        Long currentPrice,
+        Long originStock,
+        Long currentStock,
+        Long maximumPurchaseLimitCount,
         PricePolicy pricePolicy,
         Duration variationDuration,
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
-        boolean isShowStock
+        Boolean isShowStock
 ) {
     public SellerAuctionInfo {
         validateNotNull(auctionId, "경매 ID");

@@ -1,5 +1,8 @@
 package org.indoles.autionserviceserver.core.auction.dto;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.*;
 
 /**
@@ -14,5 +17,10 @@ public record AuctionSearchCondition(
 ) {
     public AuctionSearchCondition {
         validateSizeBetween(1, 100, size);
+    }
+
+    public Pageable getPageable() {
+        int pageNumber = offset / size;
+        return PageRequest.of(pageNumber, size);
     }
 }

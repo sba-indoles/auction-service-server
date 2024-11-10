@@ -23,15 +23,15 @@ import static org.indoles.autionserviceserver.core.auction.domain.validate.Valid
  */
 public record CreateAuctionCommand(
         String productName,
-        long originPrice,
-        long stock,
-        long maximumPurchaseLimitCount,
+        Long originPrice,
+        Long stock,
+        Long maximumPurchaseLimitCount,
         PricePolicy pricePolicy,
         Duration variationDuration,
         LocalDateTime requestTime,
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
-        boolean isShowStock
+        Boolean isShowStock
 ) {
     public CreateAuctionCommand {
         validateNotNull(productName, "상품 이름");

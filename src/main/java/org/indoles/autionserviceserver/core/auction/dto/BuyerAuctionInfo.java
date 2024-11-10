@@ -32,13 +32,13 @@ public record BuyerAuctionInfo(
         Long auctionId,
         Long sellerId,
         String productName,
-        long originPrice,
-        long currentPrice,
+        Long originPrice,
+        Long currentPrice,
         @JsonInclude(NON_NULL)
         Long originStock,
         @JsonInclude(NON_NULL)
         Long currentStock,
-        long maximumPurchaseLimitCount,
+        Long maximumPurchaseLimitCount,
         PricePolicy pricePolicy,
         Duration variationDuration,
         LocalDateTime startedAt,

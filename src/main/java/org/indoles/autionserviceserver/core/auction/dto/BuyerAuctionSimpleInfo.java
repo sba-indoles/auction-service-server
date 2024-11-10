@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
  */
 
 public record BuyerAuctionSimpleInfo(
-        long id,
+        Long id,
         String title,
-        long price,
+        Long price,
         LocalDateTime startedAt,
         LocalDateTime finishedAt
 ) {
