@@ -23,13 +23,13 @@ public class Mapper {
                 .variationDuration(auction.getVariationDuration())
                 .startedAt(auction.getStartedAt())
                 .finishedAt(auction.getFinishedAt())
-                .isShowStock(auction.getIsShowStock())
+                .isShowStock(auction.isShowStock())
                 .build();
     }
 
     public static BuyerAuctionInfo convertToBuyerAuctionInfo(Auction auction) {
-        Long currentStock = auction.getIsShowStock() ? auction.getCurrentStock() : null;
-        Long originStock = auction.getIsShowStock() ? auction.getOriginStock() : null;
+        Long currentStock = auction.isShowStock() ? auction.getCurrentStock() : null;
+        Long originStock = auction.isShowStock() ? auction.getOriginStock() : null;
 
         return BuyerAuctionInfo.builder()
                 .auctionId(auction.getId())
@@ -60,7 +60,7 @@ public class Mapper {
                 .variationDuration(auction.getVariationDuration())
                 .startedAt(auction.getStartedAt())
                 .finishedAt(auction.getFinishedAt())
-                .isShowStock(auction.getIsShowStock())
+                .isShowStock(auction.isShowStock())
                 .build();
     }
 

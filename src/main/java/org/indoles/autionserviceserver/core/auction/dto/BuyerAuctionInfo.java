@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.*;
+import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.*;
 
 /**
  * 경매의 구매자가 조회할 수 있는 경매 상품의 정보

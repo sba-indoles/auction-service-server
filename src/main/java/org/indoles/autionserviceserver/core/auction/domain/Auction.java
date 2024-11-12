@@ -3,6 +3,7 @@ package org.indoles.autionserviceserver.core.auction.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.indoles.autionserviceserver.core.auction.domain.enums.AuctionStatus;
 import org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
@@ -12,41 +13,50 @@ import org.indoles.autionserviceserver.global.exception.SuccessfulOperationExcep
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.*;
+
 
 @Getter
-@NoArgsConstructor
 public class Auction {
 
+    private static final int MINIMUM_STOCK_COUNT = 1;
+    private static final long NANOS_IN_MINUTE = 60_000_000_000L; // 1분의 나노초
+    private static final long MAX_AUCTION_DURATION_NANOS = 60 * NANOS_IN_MINUTE; // 60분의 나노초
+
     private Long id;
-    private Long sellerId;
-    private String productName;
-    private Long originPrice;
-    private Long currentPrice;
-    private Long originStock;
-    private Long currentStock;
-    private Long maximumPurchaseLimitCount;
+    private final Long sellerId;
+    private final String productName;
+    private long originPrice;
+    private long currentPrice;
+    private long originStock;
+    private long currentStock;
+    private long maximumPurchaseLimitCount;
     private PricePolicy pricePolicy;
     private Duration variationDuration;
-    private Boolean isShowStock;
     private LocalDateTime startedAt;
     private LocalDateTime finishedAt;
+    private boolean isShowStock;
 
     @Builder
     public Auction(
             Long id,
             Long sellerId,
             String productName,
-            Long originPrice,
-            Long currentPrice,
-            Long originStock,
-            Long currentStock,
-            Long maximumPurchaseLimitCount,
+            long originPrice,
+            long currentPrice,
+            long originStock,
+            long currentStock,
+            long maximumPurchaseLimitCount,
             PricePolicy pricePolicy,
             Duration variationDuration,
-            Boolean isShowStock,
             LocalDateTime startedAt,
-            LocalDateTime finishedAt
+            LocalDateTime finishedAt,
+            boolean isShowStock
     ) {
+        validateAuctionTime(startedAt, finishedAt);
+        validateVariationDuration(variationDuration, Duration.between(startedAt, finishedAt));
+        validateMinimumPrice(startedAt, finishedAt, variationDuration, originPrice, pricePolicy);
+
         this.id = id;
         this.sellerId = sellerId;
         this.productName = productName;
@@ -57,13 +67,9 @@ public class Auction {
         this.maximumPurchaseLimitCount = maximumPurchaseLimitCount;
         this.pricePolicy = pricePolicy;
         this.variationDuration = variationDuration;
-        this.isShowStock = isShowStock;
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
-
-        ValidateAuction.validateAuctionTime(startedAt, finishedAt);
-        ValidateAuction.validateVariationDuration(variationDuration, Duration.between(startedAt, finishedAt));
-        ValidateAuction.validateMinimumPrice(startedAt, finishedAt, variationDuration, originPrice, pricePolicy);
+        this.isShowStock = isShowStock;
     }
 
     /**

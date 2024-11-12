@@ -2,7 +2,8 @@ package org.indoles.autionserviceserver.core.auction.dto;
 
 import java.time.LocalDateTime;
 
-import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.validateNotNull;
+import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.validateNotNull;
+
 
 /**
  * 경매 취소을 위한 DTO

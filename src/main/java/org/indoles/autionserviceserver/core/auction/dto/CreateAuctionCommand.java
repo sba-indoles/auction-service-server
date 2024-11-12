@@ -1,12 +1,12 @@
 package org.indoles.autionserviceserver.core.auction.dto;
 
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
+import org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.*;
-import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.validateNotNull;
+import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.*;
 
 /**
  * 경매 물품 생성을 위한 객체
@@ -47,7 +47,7 @@ public record CreateAuctionCommand(
         validateOriginPrice(originPrice);
         validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
         validateVariationDuration(variationDuration);
-        validateAuctionTime(startedAt, finishedAt);
+        ValidateAuctionDto.validateAuctionTime(startedAt, finishedAt);
         validateStartedAt(requestTime, startedAt);
         validateStock(stock, maximumPurchaseLimitCount);
     }
