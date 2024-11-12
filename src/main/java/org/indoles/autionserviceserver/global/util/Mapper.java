@@ -3,9 +3,7 @@ package org.indoles.autionserviceserver.global.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
-import org.indoles.autionserviceserver.core.auction.dto.AuctionInfo;
-import org.indoles.autionserviceserver.core.auction.dto.BuyerAuctionInfo;
-import org.indoles.autionserviceserver.core.auction.dto.SellerAuctionInfo;
+import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -99,4 +97,28 @@ public class Mapper {
                 .isShowStock(auction.isShowStock())
                 .build();
     }
+
+    public static BuyerAuctionSimpleInfo convertToBuyerAuctionSimpleInfo(Auction auction) {
+        return new BuyerAuctionSimpleInfo(
+                auction.getId(),
+                auction.getProductName(),
+                auction.getCurrentPrice(),
+                auction.getStartedAt(),
+                auction.getFinishedAt()
+        );
+    }
+
+    public static SellerAuctionSimpleInfo convertToSellerAuctionSimpleInfo(Auction auction) {
+        return new SellerAuctionSimpleInfo(
+                auction.getId(),
+                auction.getProductName(),
+                auction.getOriginPrice(),
+                auction.getCurrentPrice(),
+                auction.getOriginStock(),
+                auction.getCurrentStock(),
+                auction.getStartedAt(),
+                auction.getFinishedAt()
+        );
+    }
+
 }
