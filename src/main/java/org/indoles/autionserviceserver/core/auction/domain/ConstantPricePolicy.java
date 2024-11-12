@@ -1,7 +1,7 @@
 package org.indoles.autionserviceserver.core.auction.domain;
 
 import lombok.Getter;
-import org.indoles.autionserviceserver.core.auction.entity.enums.PricePolicyType;
+import org.indoles.autionserviceserver.core.auction.domain.enums.PricePolicyType;
 
 @Getter
 public class ConstantPricePolicy implements PricePolicy {

@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.domain.enums.AuctionStatus;
 import org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction;
-import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
-import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionException;
+import org.indoles.autionserviceserver.global.exception.BadRequestException;
+import org.indoles.autionserviceserver.global.exception.ErrorCode;
+import org.indoles.autionserviceserver.global.exception.SuccessfulOperationException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.indoles.autionserviceserver.core.auction.entity.exception.AuctionExceptionCode.AUCTION_NOT_RUNNING;
 
 @Getter
 @NoArgsConstructor
@@ -99,11 +99,37 @@ public class Auction {
         AuctionStatus currentStatus = ValidateAuction.currentStatus(requestTime, this);
 
         if (!currentStatus.isRunning()) {
-            throw new AuctionException(AUCTION_NOT_RUNNING, currentStatus);
+            ValidateAuction.validateAuctionBidStatus(requestTime, this);
         }
 
-        ValidateAuction.validateAuctionBidStatus(price, quantity, requestTime, this);
+        verifyCurrentPrice(price, requestTime);
+        verifyPurchaseQuantity(quantity);
+
         this.currentStock -= quantity;
+    }
+
+    private void verifyCurrentPrice(long inputPrice, LocalDateTime requestTime) {
+        Duration elapsedDuration = Duration.between(startedAt, requestTime);
+        long currentVariationCount = elapsedDuration.dividedBy(variationDuration);
+
+        long actualPrice = pricePolicy.calculatePriceAtVariation(originPrice, currentVariationCount);
+
+        if (actualPrice != inputPrice) {
+            String message = String.format("입력한 가격으로 상품을 구매할 수 없습니다. 현재가격: %d 입력가격: %d", actualPrice, inputPrice);
+            throw new BadRequestException(message, ErrorCode.A022);
+        }
+    }
+
+    private void verifyPurchaseQuantity(long quantity) {
+        if (isOutOfBoundQuantity(quantity)) {
+            String message = String.format("구매 가능 갯수를 초과하거나 0이하의 갯수만큼 구매할 수 없습니다. 요청: %d, 인당구매제한: %d", quantity,
+                    maximumPurchaseLimitCount);
+            throw new BadRequestException(message, ErrorCode.A030);
+        }
+        if (!hasEnoughStock(quantity)) {
+            String message = String.format("재고가 부족합니다. 현재 재고: %d, 요청 구매 수량: %d", currentStock, quantity);
+            throw new SuccessfulOperationException(message, ErrorCode.A012);
+        }
     }
 
     /**
@@ -128,23 +154,5 @@ public class Auction {
 
     public boolean isSeller(Long sellerId) {
         return this.sellerId.equals(sellerId);
-    }
-
-    public static AuctionEntity toEntity(Auction auction) {
-        return AuctionEntity.builder()
-                .id(auction.getId())
-                .sellerId(auction.getSellerId())
-                .productName(auction.getProductName())
-                .originPrice(auction.getOriginPrice())
-                .currentPrice(auction.getCurrentPrice())
-                .originStock(auction.getOriginStock())
-                .currentStock(auction.getCurrentStock())
-                .maximumPurchaseLimitCount(auction.getMaximumPurchaseLimitCount())
-                .pricePolicy(auction.getPricePolicy())
-                .variationDuration(auction.getVariationDuration())
-                .isShowStock(auction.getIsShowStock())
-                .startedAt(auction.getStartedAt())
-                .finishedAt(auction.getFinishedAt())
-                .build();
     }
 }

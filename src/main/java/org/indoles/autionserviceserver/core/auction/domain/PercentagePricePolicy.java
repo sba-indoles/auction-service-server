@@ -1,8 +1,8 @@
 package org.indoles.autionserviceserver.core.auction.domain;
 
 import lombok.Getter;
+import org.indoles.autionserviceserver.core.auction.domain.enums.PricePolicyType;
 import org.indoles.autionserviceserver.core.auction.domain.validate.ValidatePercentPrice;
-import org.indoles.autionserviceserver.core.auction.entity.enums.PricePolicyType;
 
 import java.util.Objects;
 
