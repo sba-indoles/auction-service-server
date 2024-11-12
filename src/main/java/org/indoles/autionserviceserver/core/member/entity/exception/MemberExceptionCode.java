@@ -2,8 +2,6 @@ package org.indoles.autionserviceserver.core.member.entity.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.indoles.autionserviceserver.global.exception.ExceptionCode;
-import org.indoles.autionserviceserver.global.exception.ExceptionCode;
 import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;

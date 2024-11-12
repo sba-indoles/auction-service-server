@@ -1,14 +1,21 @@
 package org.indoles.autionserviceserver.global.exception;
 
-public abstract class BusinessException extends RuntimeException{
+public class BusinessException extends RuntimeException {
 
-    private final ExceptionCode exceptionCode;
-    private final Object[] args;
+    private final int statusCode;
+    private final ErrorCode errorCode;
 
-    protected BusinessException(final ExceptionCode exceptionCode, final Object... args) {
-        super(exceptionCode.getMessage());
-        this.exceptionCode = exceptionCode;
-        this.args = args;
+    public BusinessException(final String message, final int statusCode, final ErrorCode errorCode) {
+        super(message);
+        this.statusCode = statusCode;
+        this.errorCode = errorCode;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public ErrorCode getErrorCode() {
+        return errorCode;
     }
 }
-
