@@ -6,6 +6,7 @@ import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.dto.AuctionInfo;
 import org.indoles.autionserviceserver.core.auction.dto.BuyerAuctionInfo;
 import org.indoles.autionserviceserver.core.auction.dto.SellerAuctionInfo;
+import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Mapper {
@@ -63,4 +64,39 @@ public class Mapper {
                 .build();
     }
 
+    public static Auction convertToAuction(AuctionEntity auctionEntity) {
+        return new Auction(
+                auctionEntity.getId(),
+                auctionEntity.getSellerId(),
+                auctionEntity.getProductName(),
+                auctionEntity.getOriginPrice(),
+                auctionEntity.getCurrentPrice(),
+                auctionEntity.getOriginStock(),
+                auctionEntity.getCurrentStock(),
+                auctionEntity.getMaximumPurchaseLimitCount(),
+                auctionEntity.getPricePolicy(),
+                auctionEntity.getVariationDuration(),
+                auctionEntity.getStartedAt(),
+                auctionEntity.getFinishedAt(),
+                auctionEntity.isShowStock()
+        );
+    }
+
+    public static AuctionEntity convertToAuctionEntity(Auction auction) {
+        return AuctionEntity.builder()
+                .id(auction.getId())
+                .sellerId(auction.getSellerId())
+                .productName(auction.getProductName())
+                .originPrice(auction.getOriginPrice())
+                .currentPrice(auction.getCurrentPrice())
+                .originStock(auction.getOriginStock())
+                .currentStock(auction.getCurrentStock())
+                .maximumPurchaseLimitCount(auction.getMaximumPurchaseLimitCount())
+                .pricePolicy(auction.getPricePolicy())
+                .variationDuration(auction.getVariationDuration())
+                .startedAt(auction.getStartedAt())
+                .finishedAt(auction.getFinishedAt())
+                .isShowStock(auction.isShowStock())
+                .build();
+    }
 }
