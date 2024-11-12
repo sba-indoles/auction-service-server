@@ -10,7 +10,7 @@ package org.indoles.autionserviceserver.core.auction.dto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.validateSizeBetween;
+import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.validateSizeBetween;
 
 public record SellerAuctionSearchCondition(
         long sellerId,

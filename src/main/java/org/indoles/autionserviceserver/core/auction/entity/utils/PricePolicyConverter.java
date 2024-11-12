@@ -7,12 +7,13 @@ import jakarta.persistence.Converter;
 import org.indoles.autionserviceserver.core.auction.domain.ConstantPricePolicy;
 import org.indoles.autionserviceserver.core.auction.domain.PercentagePricePolicy;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
-import org.indoles.autionserviceserver.core.auction.entity.enums.PricePolicyType;
-import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionException;
+import org.indoles.autionserviceserver.core.auction.domain.enums.PricePolicyType;
+import org.indoles.autionserviceserver.global.exception.BadRequestException;
+import org.indoles.autionserviceserver.global.exception.ErrorCode;
+import org.indoles.autionserviceserver.global.exception.InfraStructureException;
 
 import java.io.IOException;
 
-import static org.indoles.autionserviceserver.core.auction.entity.exception.AuctionExceptionCode.*;
 
 @Converter
 public class PricePolicyConverter implements AttributeConverter<PricePolicy, String> {
@@ -27,7 +28,7 @@ public class PricePolicyConverter implements AttributeConverter<PricePolicy, Str
         try {
             return objectMapper.writeValueAsString(pricePolicy);
         } catch (IOException e) {
-            throw new AuctionException(CONVERT_TO_STRING_ERROR, e);
+            throw new InfraStructureException("해당 객체를 String으로 변환할 수 없습니다.", ErrorCode.A023);
         }
     }
 
@@ -43,13 +44,11 @@ public class PricePolicyConverter implements AttributeConverter<PricePolicy, Str
             return switch (type) {
                 case PERCENTAGE -> objectMapper.treeToValue(jsonNode, PercentagePricePolicy.class);
                 case CONSTANT -> objectMapper.treeToValue(jsonNode, ConstantPricePolicy.class);
-                default -> throw new AuctionException(CONVERT_TO_INVALID_TYPE);
+                default -> throw new BadRequestException("해당 type으로 변환할 수 없습니다. 현재 type=" + type, ErrorCode.A024);
             };
 
         } catch (IOException e) {
-            throw new AuctionException(CONVERT_TO_FAILED_PRICE_POLICY_TYPE, e);
-        } catch (IllegalArgumentException e) {
-            throw new AuctionException(CONVERT_TO_INVALID_PRICE_POLICY_TYPE, e);
+            throw new InfraStructureException("해당 JSON을 PricePolicy 객체로 변환하는 데 실패했습니다." + e, ErrorCode.A025);
         }
     }
 }

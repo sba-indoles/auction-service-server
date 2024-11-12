@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.dto.AuctionSearchCondition;
 import org.indoles.autionserviceserver.core.auction.dto.*;
-import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
-import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionException;
-import org.indoles.autionserviceserver.core.auction.repository.AuctionRepository;
+import org.indoles.autionserviceserver.core.auction.infra.AuctionRepository;
 import org.indoles.autionserviceserver.core.member.dto.response.SignInInfo;
 import org.indoles.autionserviceserver.core.member.entity.enums.Role;
+import org.indoles.autionserviceserver.global.exception.AuthorizationException;
+import org.indoles.autionserviceserver.global.exception.BadRequestException;
+import org.indoles.autionserviceserver.global.exception.ErrorCode;
+import org.indoles.autionserviceserver.global.exception.NotFoundException;
 import org.indoles.autionserviceserver.global.util.Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.indoles.autionserviceserver.core.auction.entity.exception.AuctionExceptionCode.*;
 
 @Slf4j
 @Service
@@ -54,44 +55,44 @@ public class AuctionService {
                     .isShowStock(createAuctionCommand.isShowStock())
                     .build();
 
-            AuctionEntity auctionEntity = Auction.toEntity(auction);
-            auctionRepository.save(auctionEntity);
+            auctionRepository.save(auction);
         } catch (Exception e) {
             log.error("경매 물품 생성 중 오류 발생", e);
             throw e;
         }
     }
 
+
     /**
      * 경매 시작 전, 등록한 경매에 대해서 취소하는 서비스 로직
      *
-     * @param signInInfo           경매를 취소하려는 사용자 정보
-     * @param cancelAuctionCommand 취소할 경매 정보
+     * @param signInInfo 경매를 취소하려는 사용자 정보
      */
 
     @Transactional
-    public void cancelAuction(SignInInfo signInInfo, CancelAuctionCommand cancelAuctionCommand) {
+    public void cancelAuction(SignInInfo signInInfo, CancelAuctionCommand command) {
         if (!signInInfo.isType(Role.SELLER)) {
-            throw new AuctionException(UNAUTHORIZED_SELLER);
+            throw new AuthorizationException("판매자만 경매를 취소할 수 있습니다.", ErrorCode.A017);
         }
 
-        Auction auction = findAuctionObject(cancelAuctionCommand.auctionId()).toDomain();
+        Auction auction = findAuctionObject(command.auctionId());
 
         if (!auction.isSeller(signInInfo.id())) {
-            throw new AuctionException(AUCTION_NOT_FOUND);
+            throw new AuthorizationException("자신이 등록한 경매만 취소할 수 있습니다.", ErrorCode.A018);
+        }
+        if (!auction.currentStatus(command.requestTime()).isWaiting()) {
+            String message = String.format("시작 전인 경매만 취소할 수 있습니다. 시작시간=%s, 요청시간=%s", auction.getStartedAt(),
+                    command.requestTime());
+            throw new BadRequestException(message, ErrorCode.A019);
         }
 
-        if (!auction.currentStatus(cancelAuctionCommand.requestTime()).isWaiting()) {
-            throw new AuctionException(CANNOT_CANCEL_AUCTION);
-        }
-
-        AuctionEntity auctionEntity = Auction.toEntity(auction);
-        auctionRepository.deleteById(auctionEntity.getId());
+        auctionRepository.deleteById(command.auctionId());
     }
 
-    public AuctionEntity findAuctionObject(Long auctionId) {
+    private Auction findAuctionObject(long auctionId) {
         return auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
+                .orElseThrow(
+                        () -> new NotFoundException("경매(Auction)를 찾을 수 없습니다. AuctionId: " + auctionId, ErrorCode.A010));
     }
 
     /**
@@ -104,11 +105,10 @@ public class AuctionService {
      */
 
     @Transactional
-    public void submitPurchase(Long auctionId, Long price, Long quantity, LocalDateTime requestTime) {
-        Auction auction = findAuctionObject(auctionId).toDomain();
+    public void submitPurchase(long auctionId, long price, long quantity, LocalDateTime requestTime) {
+        Auction auction = findAuctionObject(auctionId);
         auction.submit(price, quantity, requestTime);
-        AuctionEntity auctionEntity = Auction.toEntity(auction);
-        auctionRepository.save(auctionEntity);
+        auctionRepository.save(auction);
     }
 
     /**
@@ -119,24 +119,16 @@ public class AuctionService {
      */
 
     @Transactional
-    public void cancelPurchase(Long auctionId, Long quantity) {
-        LocalDateTime updatedAt = getUpdatedAtForAuction(auctionId);
-        Auction auction = findAuctionObjectForUpdate(auctionId, updatedAt).toDomain();
+    public void cancelPurchase(long auctionId, long quantity) {
+        Auction auction = findAuctionObjectForUpdate(auctionId);
         auction.refundStock(quantity);
-
-        AuctionEntity auctionEntity = Auction.toEntity(auction);
-        auctionRepository.save(auctionEntity);
+        auctionRepository.save(auction);
     }
 
-    private AuctionEntity findAuctionObjectForUpdate(Long auctionId, LocalDateTime updatedAt) {
-        return auctionRepository.findByIdAndUpdatedAt(auctionId, updatedAt)
-                .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
-    }
-
-    private LocalDateTime getUpdatedAtForAuction(Long auctionId) {
-        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
-        return auctionEntity.getUpdatedAt();
+    private Auction findAuctionObjectForUpdate(long auctionId) {
+        return auctionRepository.findByIdForUpdate(auctionId)
+                .orElseThrow(
+                        () -> new NotFoundException("경매(Auction)를 찾을 수 없습니다. AuctionId: " + auctionId, ErrorCode.A010));
     }
 
     /**
@@ -145,11 +137,8 @@ public class AuctionService {
      * @param auctionId 경매번호
      */
 
-    public AuctionInfo getAuction(Long auctionId) {
-        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
-
-        Auction auction = auctionEntity.toDomain();
+    public AuctionInfo getAuction(long auctionId) {
+        Auction auction = findAuctionObject(auctionId);
 
         return Mapper.convertToAuctionInfo(auction);
     }
@@ -162,15 +151,12 @@ public class AuctionService {
      *                   return 판매자용 경매 정보
      */
 
-    public SellerAuctionInfo getSellerAuction(SignInInfo sellerInfo, Long auctionId) {
-        if (!sellerInfo.isType(Role.SELLER)) {
-            throw new AuctionException(UNAUTHORIZED_SELLER);
+    public SellerAuctionInfo getSellerAuction(SignInInfo sellerInfo, long auctionId) {
+        Auction auction = findAuctionObject(auctionId);
+
+        if (!auction.isSeller(sellerInfo.id())) {
+            throw new AuthorizationException("판매자는 자신이 등록한 경매만 조회할 수 있습니다.", ErrorCode.A020);
         }
-
-        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
-
-        Auction auction = auctionEntity.toDomain();
 
         return Mapper.convertToSellerAuctionInfo(auction);
     }
@@ -181,11 +167,8 @@ public class AuctionService {
      * @param auctionId return 구매자용 경매 정보
      */
 
-    public BuyerAuctionInfo getBuyerAuction(Long auctionId) {
-        AuctionEntity auctionEntity = auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new AuctionException(AUCTION_NOT_FOUND));
-
-        Auction auction = auctionEntity.toDomain();
+    public BuyerAuctionInfo getBuyerAuction(long auctionId) {
+        Auction auction = findAuctionObject(auctionId);
 
         return Mapper.convertToBuyerAuctionInfo(auction);
     }
@@ -197,39 +180,18 @@ public class AuctionService {
      */
 
     public List<SellerAuctionSimpleInfo> getSellerAuctionSimpleInfos(SellerAuctionSearchCondition condition) {
-        return auctionRepository.findAllBySellerId(condition.sellerId(), condition.getPageable())
-                .stream()
-                .map(AuctionEntity::toDomain)
-                .map(auction -> new SellerAuctionSimpleInfo(
-                        auction.getId(),
-                        auction.getProductName(),
-                        auction.getOriginPrice(),
-                        auction.getCurrentPrice(),
-                        auction.getOriginStock(),
-                        auction.getCurrentStock(),
-                        auction.getStartedAt(),
-                        auction.getFinishedAt()
-                ))
+        return auctionRepository.findAllBy(condition).stream()
+                .map(Mapper::convertToSellerAuctionSimpleInfo)
                 .toList();
     }
 
     /**
      * 경매 목록을 조회하는 서비스 로직(구매자용)
-     *
-     * @param auctionCondition return 구매자용 경매 정보
      */
 
-    public List<BuyerAuctionSimpleInfo> getBuyerAuctionSimpleInfos(AuctionSearchCondition auctionCondition) {
-        return auctionRepository.findAll(auctionCondition.getPageable())
-                .stream()
-                .map(AuctionEntity::toDomain)
-                .map(auction -> new BuyerAuctionSimpleInfo(
-                        auction.getId(),
-                        auction.getProductName(),
-                        auction.getCurrentPrice(),
-                        auction.getStartedAt(),
-                        auction.getFinishedAt()
-                ))
+    public List<BuyerAuctionSimpleInfo> getBuyerAuctionSimpleInfos(AuctionSearchCondition condition) {
+        return auctionRepository.findAllBy(condition).stream()
+                .map(Mapper::convertToBuyerAuctionSimpleInfo)
                 .toList();
     }
 }

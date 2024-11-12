@@ -7,7 +7,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.antlr.v4.runtime.misc.NotNull;
-import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
 import org.indoles.autionserviceserver.core.auction.entity.utils.PricePolicyConverter;
 
@@ -57,9 +56,6 @@ public class AuctionEntity {
     @NotNull
     private LocalDateTime finishedAt;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
     @Builder
     private AuctionEntity(
             Long id,
@@ -89,27 +85,5 @@ public class AuctionEntity {
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
         this.isShowStock = isShowStock;
-    }
-
-    public Auction toDomain() {
-        return Auction.builder()
-                .id(this.id)
-                .sellerId(this.sellerId)
-                .productName(this.productName)
-                .originPrice(this.originPrice)
-                .currentPrice(this.currentPrice)
-                .originStock(this.originStock)
-                .currentStock(this.currentStock)
-                .maximumPurchaseLimitCount(this.maximumPurchaseLimitCount)
-                .pricePolicy(this.pricePolicy)
-                .variationDuration(this.variationDuration)
-                .isShowStock(this.isShowStock)
-                .startedAt(this.startedAt)
-                .finishedAt(this.finishedAt)
-                .build();
-    }
-
-    public void update() {
-        this.updatedAt = LocalDateTime.now();
     }
 }

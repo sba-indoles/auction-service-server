@@ -2,7 +2,7 @@ package org.indoles.autionserviceserver.core.auction.domain;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.indoles.autionserviceserver.core.auction.entity.enums.PricePolicyType;
+import org.indoles.autionserviceserver.core.auction.domain.enums.PricePolicyType;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.*;
+import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.*;
 
 /**
  * 판매자가 조회할 수 있는 경매 정보

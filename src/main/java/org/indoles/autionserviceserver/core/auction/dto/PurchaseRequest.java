@@ -1,7 +1,7 @@
 package org.indoles.autionserviceserver.core.auction.dto;
 
-import org.indoles.autionserviceserver.core.auction.entity.exception.AuctionException;
-import static org.indoles.autionserviceserver.core.auction.entity.exception.AuctionExceptionCode.*;
+import org.indoles.autionserviceserver.global.exception.BadRequestException;
+import org.indoles.autionserviceserver.global.exception.ErrorCode;
 
 public record PurchaseRequest(
         long price,
@@ -14,13 +14,13 @@ public record PurchaseRequest(
 
     private void validatePrice(long price) {
         if (price < 0) {
-            throw new AuctionException(AUCTION_PRICE_MISMATCH);
+            throw new BadRequestException("경매 입찰 요청 가격은 음수일 수 없습니다. 요청가격: " + price, ErrorCode.A026);
         }
     }
 
     private void validateQuantity(long quantity) {
         if (quantity <= 0) {
-            throw new AuctionException(INVALID_PURCHASE_QUANTITY);
+            throw new BadRequestException("경매 입찰 요청 수량은 0보다 커야합니다. 요청수량: " + quantity, ErrorCode.A027);
         }
     }
 }
