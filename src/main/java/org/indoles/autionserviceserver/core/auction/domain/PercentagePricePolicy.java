@@ -60,9 +60,4 @@ public class PercentagePricePolicy implements PricePolicy {
         PercentagePricePolicy that = (PercentagePricePolicy) o;
         return Double.compare(percentage, that.percentage) == 0 && pricePolicyType == that.pricePolicyType;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(pricePolicyType, percentage);
-    }
 }

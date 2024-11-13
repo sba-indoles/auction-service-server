@@ -7,7 +7,7 @@ import org.indoles.autionserviceserver.global.exception.ErrorCode;
 public class ValidatePercentPrice {
 
     /**
-     * 할인율 유효성 검사
+     * 할인율 유효성 검사(비율 할인율)
      *
      * @param discountRate
      * @throws BadRequestException 할인율이 0% 초과 50% 이하가 아닐 경우 발생
