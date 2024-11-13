@@ -10,7 +10,6 @@ import java.util.Objects;
 public class PercentagePricePolicy implements PricePolicy {
 
     private PricePolicyType pricePolicyType = PricePolicyType.PERCENTAGE;
-
     private final double percentage;
 
     public PercentagePricePolicy(double percentage) {

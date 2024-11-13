@@ -12,6 +12,9 @@ public class ConstantPricePolicy implements PricePolicy {
     private PricePolicyType pricePolicyType = PricePolicyType.CONSTANT;
     private long variationWidth;
 
+    public ConstantPricePolicy() {
+    }
+
     public ConstantPricePolicy(long variationWidth) {
         validateVariationWidth(variationWidth);
         this.variationWidth = variationWidth;
