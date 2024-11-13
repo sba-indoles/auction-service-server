@@ -2,7 +2,9 @@ package org.indoles.autionserviceserver.core.auction.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
-import org.indoles.autionserviceserver.core.auction.controller.interfaces.SignInInfo;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.BuyerOnly;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.MemberServiceClient;
+import org.indoles.autionserviceserver.core.auction.dto.SignInInfo;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.service.AuctionService;
 import org.indoles.autionserviceserver.global.dto.AuctionPurchaseRequestMessage;
@@ -19,7 +21,7 @@ import java.util.UUID;
 public class BuyerAuctionController {
 
     private final AuctionService auctionService;
-
+    private final MemberServiceClient memberServiceClient;
 
     /**
      * 경매 목록 조회 API(구매자 전용)
@@ -36,6 +38,7 @@ public class BuyerAuctionController {
     /**
      * 경매 목록 상세 조회 API(구매자 전용)
      */
+    @BuyerOnly
     @GetMapping("/auctions/{auctionId}")
     public ResponseEntity<BuyerAuctionInfo> getAuction(@PathVariable("auctionId") Long auctionId) {
         BuyerAuctionInfo result = auctionService.getBuyerAuction(auctionId);
@@ -45,11 +48,14 @@ public class BuyerAuctionController {
     /**
      * 경매 입찰 API(구매자 전용)
      */
+    @BuyerOnly
     @PostMapping("/auctions/{auctionId}/purchase")
     public ResponseEntity<PurchaseResponse> submitAuction(SignInInfo signInInfo,
                                                           @CurrentTime LocalDateTime now,
                                                           @PathVariable(name = "auctionId") Long auctionId,
                                                           @RequestBody PurchaseRequest purchaseRequest) {
+        SignInInfo signInInfo = memberServiceClient.getSignInInfo();
+
         AuctionPurchaseRequestMessage requestMessage = AuctionPurchaseRequestMessage.builder()
                 .requestId(UUID.randomUUID())
                 .buyerId(signInInfo.id())
