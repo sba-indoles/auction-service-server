@@ -162,7 +162,7 @@ public class AuctionService {
     }
 
     /**
-     * 구매한 경매에 대해 조회하는 서비스 로직(구매자용)
+     * 구매한 경매에 대해 상세 조회하는 서비스 로직(구매자용)
      *
      * @param auctionId return 구매자용 경매 정보
      */

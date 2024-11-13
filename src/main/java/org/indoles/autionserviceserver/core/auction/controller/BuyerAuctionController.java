@@ -35,7 +35,7 @@ public class BuyerAuctionController {
     }
 
     /**
-     * 경매 목록 조회 API(구매자 전용)
+     * 경매 목록 상세 조회 API(구매자 전용)
      */
     @GetMapping("/auctions/{auctionId}")
     public ResponseEntity<BuyerAuctionInfo> getAuction(@PathVariable("auctionId") Long auctionId) {
