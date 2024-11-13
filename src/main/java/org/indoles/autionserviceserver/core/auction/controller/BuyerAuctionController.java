@@ -29,7 +29,7 @@ public class BuyerAuctionController {
      * 경매 목록 조회 API(구매자 전용)
      */
 
-    @GetMapping("/auctions")
+    @GetMapping
     public ResponseEntity<List<BuyerAuctionSimpleInfo>> getAuctions(@RequestParam(name = "offset") int offset,
                                                                     @RequestParam(name = "size") int size) {
         AuctionSearchCondition condition = new AuctionSearchCondition(offset, size);
@@ -41,7 +41,7 @@ public class BuyerAuctionController {
      * 경매 목록 상세 조회 API(구매자 전용)
      */
     @BuyerOnly
-    @GetMapping("/auctions/{auctionId}")
+    @GetMapping("/{auctionId}")
     public ResponseEntity<BuyerAuctionInfo> getAuction(@PathVariable("auctionId") Long auctionId) {
         BuyerAuctionInfo result = auctionService.getBuyerAuction(auctionId);
         return ResponseEntity.ok(result);
@@ -51,7 +51,7 @@ public class BuyerAuctionController {
      * 경매 입찰 API(구매자 전용)
      */
     @BuyerOnly
-    @PostMapping("/auctions/{auctionId}/purchase")
+    @PostMapping("/{auctionId}/purchase")
     public ResponseEntity<PurchaseResponse> submitAuction(
             @RequestHeader("X-SignIn-Info") String signInInfoString,
             @CurrentTime LocalDateTime now,
