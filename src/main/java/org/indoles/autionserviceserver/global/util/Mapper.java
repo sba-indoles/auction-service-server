@@ -120,5 +120,4 @@ public class Mapper {
                 auction.getFinishedAt()
         );
     }
-
 }

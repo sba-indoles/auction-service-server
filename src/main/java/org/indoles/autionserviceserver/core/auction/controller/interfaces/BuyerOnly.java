@@ -1,4 +1,4 @@
-package org.indoles.autionserviceserver.core.member.controller.interfaces;
+package org.indoles.autionserviceserver.core.auction.controller.interfaces;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SellerOnly {
+public @interface BuyerOnly {
 }

@@ -3,11 +3,10 @@ package org.indoles.autionserviceserver.core.auction.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
+import org.indoles.autionserviceserver.core.auction.domain.enums.Role;
 import org.indoles.autionserviceserver.core.auction.dto.AuctionSearchCondition;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.infra.AuctionRepository;
-import org.indoles.autionserviceserver.core.member.dto.response.SignInInfo;
-import org.indoles.autionserviceserver.core.member.entity.enums.Role;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
@@ -162,7 +161,7 @@ public class AuctionService {
     }
 
     /**
-     * 구매한 경매에 대해 조회하는 서비스 로직(구매자용)
+     * 구매한 경매에 대해 상세 조회하는 서비스 로직(구매자용)
      *
      * @param auctionId return 구매자용 경매 정보
      */
