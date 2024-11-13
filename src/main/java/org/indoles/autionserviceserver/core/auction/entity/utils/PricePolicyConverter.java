@@ -20,6 +20,9 @@ public class PricePolicyConverter implements AttributeConverter<PricePolicy, Str
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    public PricePolicyConverter() {
+    }
+
     @Override
     public String convertToDatabaseColumn(PricePolicy pricePolicy) {
         if (pricePolicy == null) {
@@ -30,6 +33,7 @@ public class PricePolicyConverter implements AttributeConverter<PricePolicy, Str
         } catch (IOException e) {
             throw new InfraStructureException("해당 객체를 String으로 변환할 수 없습니다.", ErrorCode.A023);
         }
+
     }
 
     @Override
