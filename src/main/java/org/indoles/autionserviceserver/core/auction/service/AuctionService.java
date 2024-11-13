@@ -6,8 +6,6 @@ import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.dto.AuctionSearchCondition;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.infra.AuctionRepository;
-import org.indoles.autionserviceserver.core.member.dto.response.SignInInfo;
-import org.indoles.autionserviceserver.core.member.entity.enums.Role;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;

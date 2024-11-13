@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.service.AuctionService;
-import org.indoles.autionserviceserver.core.member.controller.interfaces.SellerOnly;
-import org.indoles.autionserviceserver.core.member.dto.response.SignInInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
