@@ -2,10 +2,9 @@ package org.indoles.autionserviceserver.core.auction.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.SignInInfo;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.service.AuctionService;
-import org.indoles.autionserviceserver.core.member.controller.interfaces.BuyerOnly;
-import org.indoles.autionserviceserver.core.member.dto.response.SignInInfo;
 import org.indoles.autionserviceserver.global.dto.AuctionPurchaseRequestMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +45,6 @@ public class BuyerAuctionController {
     /**
      * 경매 입찰 API(구매자 전용)
      */
-    @BuyerOnly
     @PostMapping("/auctions/{auctionId}/purchase")
     public ResponseEntity<PurchaseResponse> submitAuction(SignInInfo signInInfo,
                                                           @CurrentTime LocalDateTime now,

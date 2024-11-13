@@ -2,6 +2,7 @@ package org.indoles.autionserviceserver.core.auction.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.SignInInfo;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.service.AuctionService;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,6 @@ public class SellerAuctionController {
      * 경매 등록 API(판매자 전용)
      */
 
-    @SellerOnly
     @PostMapping
     public ResponseEntity<Void> createAuction(SignInInfo sellerInfo,
                                               @RequestBody CreateAuctionCommand request,
@@ -36,7 +36,6 @@ public class SellerAuctionController {
     /**
      * 경매 취소 API(판매자 전용)
      */
-    @SellerOnly
     @DeleteMapping("/{auctionId}")
     public void cancelAuction(SignInInfo sellerInfo,
                               @PathVariable("auctionId") Long auctionId,
@@ -48,7 +47,6 @@ public class SellerAuctionController {
     /**
      * 경매 조회 API(판매자 전용)
      */
-    @SellerOnly
     @GetMapping("/seller")
     public ResponseEntity<List<SellerAuctionSimpleInfo>> getSellerAuctions(SignInInfo sellerInfo,
                                                                            @RequestParam(name = "offset") int offset,
@@ -62,7 +60,6 @@ public class SellerAuctionController {
      * 경매 상세 조회 API(판매자 전용)
      */
 
-    @SellerOnly
     @GetMapping("/{auctionId}/seller")
     public ResponseEntity<SellerAuctionInfo> getSellerAuction(SignInInfo sellerInfo,
                                                               @PathVariable("auctionId") Long auctionId) {
