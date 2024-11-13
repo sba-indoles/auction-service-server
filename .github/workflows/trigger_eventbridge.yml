@@ -20,7 +20,7 @@ jobs:
             {
               "Source": "custom.github",
               "DetailType": "GitHub Repository Event",
-              "Detail": "{\"eventName\": \"push\", \"branch\": \"dev\"}",
+              "Detail": "{\"eventName\": \"push\", \"branch\": \"dev\", \"repository\": \"auction\"}",
               "EventBusName": "default"
             }
           ]'
