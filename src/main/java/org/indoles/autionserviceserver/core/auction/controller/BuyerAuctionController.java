@@ -70,6 +70,8 @@ public class BuyerAuctionController {
                 .requestTime(now)
                 .build();
 
+        auctionService.submitPurchase(auctionId, purchaseRequest.price(), purchaseRequest.quantity(), now);
+
         PurchaseResponse response = new PurchaseResponse(requestMessage.requestId());
         return ResponseEntity.ok(response);
     }
@@ -80,6 +82,21 @@ public class BuyerAuctionController {
         } catch (Exception e) {
             throw new InfraStructureException("SignInfo 변환 실패" + e, ErrorCode.A031);
         }
+    }
+
+    /**
+     * 경매 입찰 취소 API(구매자 전용)
+     */
+    @BuyerOnly
+    @DeleteMapping("/{auctionId}/refund")
+    public void cancelAuction(
+            @RequestHeader("X-SignIn-Info") String signInInfoString,
+            @PathVariable("auctionId") Long auctionId,
+            @CurrentTime LocalDateTime now
+    ) {
+        SignInInfo signInInfo = convertToSignInInfo(signInInfoString);
+        CancelAuctionCommand command = new CancelAuctionCommand(now, auctionId);
+//        auctionService.cancelPurchase(auctionId, command.quantity());
     }
 }
 

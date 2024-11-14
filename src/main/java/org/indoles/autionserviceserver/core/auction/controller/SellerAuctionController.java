@@ -100,7 +100,7 @@ public class SellerAuctionController {
 
         SignInInfo signInInfo = convertToSignInInfo(sellerInfo);
 
-        SellerAuctionInfo info = auctionService.getSellerAuction(signInInfo, auctionId);
+        SellerAuctionInfo info = auctionService.getSellerAuction(signInInfo.id(), auctionId);
         return ResponseEntity.ok(info);
     }
 
