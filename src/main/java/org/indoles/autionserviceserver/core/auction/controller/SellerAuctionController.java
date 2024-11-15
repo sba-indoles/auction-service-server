@@ -58,7 +58,7 @@ public class SellerAuctionController {
                 auctionService.createAuction(signInInfo, command);
                 return ResponseEntity.ok().build();
             } catch (Exception e) {
-                log.error("Error during chargePoint: {}", e.getMessage());
+                log.error("Error creating auction: {}", e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         } else {
@@ -86,12 +86,12 @@ public class SellerAuctionController {
                 CancelAuctionCommand command = new CancelAuctionCommand(now, auctionId);
                 auctionService.cancelAuction(signInInfo, command);
             } catch (Exception e) {
-                log.error("Error during chargePoint: {}", e.getMessage());
-                throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.A001);
+                log.error("Error cancel auction: {}", e.getMessage());
+                throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU01);
             }
-        } else {
+        }else {
             log.error("Unauthorized: JWT validation failed");
-            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.A001);
+            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU00);
         }
     }
 
@@ -115,12 +115,12 @@ public class SellerAuctionController {
                 List<SellerAuctionSimpleInfo> infos = auctionService.getSellerAuctionSimpleInfos(condition);
                 return ResponseEntity.ok(infos);
             } catch (Exception e) {
-                log.error("Error during chargePoint: {}", e.getMessage());
-                throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.A001);
+                log.error("Error creating auction: {}", e.getMessage());
+                throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU01);
             }
         } else {
             log.error("Unauthorized: JWT validation failed");
-            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.A001);
+            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU00);
         }
     }
 
@@ -143,12 +143,12 @@ public class SellerAuctionController {
                 SellerAuctionInfo info = auctionService.getSellerAuction(signInInfo, auctionId);
                 return ResponseEntity.ok(info);
             } catch (Exception e) {
-                log.error("Error during chargePoint: {}", e.getMessage());
-                throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.A001);
+                log.error("Error searching auction: {}", e.getMessage());
+                throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU01);
             }
         } else {
             log.error("Unauthorized: JWT validation failed");
-            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.A001);
+            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU00);
         }
     }
 }
