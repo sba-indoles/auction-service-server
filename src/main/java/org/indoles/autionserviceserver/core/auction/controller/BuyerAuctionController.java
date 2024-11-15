@@ -1,15 +1,18 @@
 package org.indoles.autionserviceserver.core.auction.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.BuyerOnly;
 import org.indoles.autionserviceserver.core.auction.dto.SignInInfo;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.service.AuctionService;
 import org.indoles.autionserviceserver.global.dto.AuctionPurchaseRequestMessage;
+import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
 import org.indoles.autionserviceserver.global.exception.InfraStructureException;
+import org.indoles.autionserviceserver.global.util.JwtTokenProvider;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,19 +20,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/auctions")
 @RequiredArgsConstructor
 public class BuyerAuctionController {
 
     private final AuctionService auctionService;
-    private final ObjectMapper objectMapper;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
-     * 경매 목록 조회 API(구매자 전용)
+     * 경매 목록 조회 API
      */
 
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<List<BuyerAuctionSimpleInfo>> getAuctions(@RequestParam(name = "offset") int offset,
                                                                     @RequestParam(name = "size") int size) {
         AuctionSearchCondition condition = new AuctionSearchCondition(offset, size);
@@ -42,9 +46,24 @@ public class BuyerAuctionController {
      */
     @BuyerOnly
     @GetMapping("/{auctionId}")
-    public ResponseEntity<BuyerAuctionInfo> getAuction(@PathVariable("auctionId") Long auctionId) {
-        BuyerAuctionInfo result = auctionService.getBuyerAuction(auctionId);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<BuyerAuctionInfo> getAuction(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable("auctionId") Long auctionId) {
+
+        String token = authorizationHeader.substring(7);
+
+        if (jwtTokenProvider.validateToken(token)) {
+            try {
+                jwtTokenProvider.getSignInInfoFromToken(token);
+                BuyerAuctionInfo result = auctionService.getBuyerAuction(auctionId);
+                return ResponseEntity.ok(result);
+            } catch (Exception e) {
+                log.error("Error during chargePoint: {}", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } else {
+            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU00);
+        }
     }
 
     /**
@@ -53,32 +72,60 @@ public class BuyerAuctionController {
     @BuyerOnly
     @PostMapping("/{auctionId}/purchase")
     public ResponseEntity<PurchaseResponse> submitAuction(
-            @RequestHeader("X-SignIn-Info") String signInInfoString,
+            @RequestHeader("Authorization") String authorizationHeader,
             @CurrentTime LocalDateTime now,
             @PathVariable(name = "auctionId") Long auctionId,
             @RequestBody PurchaseRequest purchaseRequest) {
 
-        SignInInfo signInInfo = convertToSignInInfo(signInInfoString);
+        String token = authorizationHeader.substring(7);
 
-        // 입찰 요청 처리
-        AuctionPurchaseRequestMessage requestMessage = AuctionPurchaseRequestMessage.builder()
-                .requestId(UUID.randomUUID())
-                .buyerId(signInInfo.id())
-                .auctionId(auctionId)
-                .price(purchaseRequest.price())
-                .quantity(purchaseRequest.quantity())
-                .requestTime(now)
-                .build();
-
-        PurchaseResponse response = new PurchaseResponse(requestMessage.requestId());
-        return ResponseEntity.ok(response);
+        if (jwtTokenProvider.validateToken(token)) {
+            try {
+                SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
+                AuctionPurchaseRequestMessage requestMessage = AuctionPurchaseRequestMessage.builder()
+                        .requestId(UUID.randomUUID())
+                        .buyerId(signInInfo.id())
+                        .auctionId(auctionId)
+                        .price(purchaseRequest.price())
+                        .quantity(purchaseRequest.quantity())
+                        .requestTime(now)
+                        .build();
+                auctionService.submitPurchase(auctionId, purchaseRequest.price(), purchaseRequest.quantity(), now);
+                PurchaseResponse response = new PurchaseResponse(requestMessage.requestId());
+                return ResponseEntity.ok(response);
+            } catch (Exception e) {
+                log.error("Error submit Auction: {}", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } else {
+            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU00);
+        }
     }
 
-    private SignInInfo convertToSignInInfo(String signInInfoString) {
-        try {
-            return objectMapper.readValue(signInInfoString, SignInInfo.class);
-        } catch (Exception e) {
-            throw new InfraStructureException("SignInfo 변환 실패" + e, ErrorCode.A031);
+    /**
+     * 경매 입찰 취소 API(구매자 전용)
+     */
+    @BuyerOnly
+    @DeleteMapping("/{auctionId}/refund")
+    public void cancelAuction(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable("auctionId") Long auctionId,
+            @RequestParam("quantity") Long quantity
+            //@CurrentTime LocalDateTime now
+    ) {
+
+        String token = authorizationHeader.substring(7);
+
+        if (jwtTokenProvider.validateToken(token)) {
+            try {
+                jwtTokenProvider.getSignInInfoFromToken(token);
+                auctionService.cancelPurchase(auctionId, quantity);
+            } catch (Exception e) {
+                log.error("Error cancel Auction: {}", e.getMessage());
+                throw new InfraStructureException("서버 에러", ErrorCode.AU02);
+            }
+        } else {
+            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU00);
         }
     }
 }

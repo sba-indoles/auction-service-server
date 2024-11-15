@@ -37,7 +37,7 @@ public record CreateAuctionCommand(
         validateNotNull(productName, "상품 이름");
         validateNotNull(pricePolicy, "경매 유형");
         validateNotNull(variationDuration, "가격 변동 주기");
-        validateNotNull(requestTime, "요청 시간");
+        //validateNotNull(requestTime, "요청 시간");
         validateNotNull(startedAt, "경매 시작 시간");
         validateNotNull(finishedAt, "경매 종료 시간");
     }
@@ -48,7 +48,7 @@ public record CreateAuctionCommand(
         validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
         validateVariationDuration(variationDuration);
         ValidateAuctionDto.validateAuctionTime(startedAt, finishedAt);
-        validateStartedAt(requestTime, startedAt);
+        //validateStartedAt(requestTime, startedAt);
         validateStock(stock, maximumPurchaseLimitCount);
     }
 }
