@@ -35,7 +35,6 @@ public class AuctionEntity {
     @NotNull
     private long originStock;
 
-    @NotNull
     private long currentStock;
 
     @NotNull

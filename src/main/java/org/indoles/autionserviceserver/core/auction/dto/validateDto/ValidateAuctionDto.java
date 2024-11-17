@@ -22,7 +22,7 @@ public class ValidateAuctionDto {
 
 
     /**
-     * AuctionInfo DTO에서 사용되는 유효성 검사
+     * AuctionInfo,BuyerActionInfo DTO에서 사용되는 유효성 검사
      */
 
     public static void validateProductName(String productName) {

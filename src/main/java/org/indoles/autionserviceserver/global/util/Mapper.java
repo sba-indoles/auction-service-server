@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionInfoRequest;
+import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionInfoResponse;
+import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionSimpleInfoResponse;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -26,11 +28,11 @@ public class Mapper {
                 .build();
     }
 
-    public static BuyerAuctionInfo convertToBuyerAuctionInfo(Auction auction) {
+    public static BuyerAuctionInfoResponse convertToBuyerAuctionInfo(Auction auction) {
         Long currentStock = auction.isShowStock() ? auction.getCurrentStock() : null;
         Long originStock = auction.isShowStock() ? auction.getOriginStock() : null;
 
-        return BuyerAuctionInfo.builder()
+        return BuyerAuctionInfoResponse.builder()
                 .auctionId(auction.getId())
                 .sellerId(auction.getSellerId())
                 .productName(auction.getProductName())
@@ -99,8 +101,8 @@ public class Mapper {
                 .build();
     }
 
-    public static BuyerAuctionSimpleInfo convertToBuyerAuctionSimpleInfo(Auction auction) {
-        return new BuyerAuctionSimpleInfo(
+    public static BuyerAuctionSimpleInfoResponse convertToBuyerAuctionSimpleInfo(Auction auction) {
+        return new BuyerAuctionSimpleInfoResponse(
                 auction.getId(),
                 auction.getProductName(),
                 auction.getCurrentPrice(),

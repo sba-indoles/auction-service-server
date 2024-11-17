@@ -1,4 +1,4 @@
-package org.indoles.autionserviceserver.core.auction.dto;
+package org.indoles.autionserviceserver.core.auction.dto.Response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
@@ -8,7 +8,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.*;
 import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.*;
 
 /**
@@ -29,23 +28,23 @@ import static org.indoles.autionserviceserver.core.auction.dto.validateDto.Valid
  */
 
 @Builder
-public record BuyerAuctionInfo(
+public record BuyerAuctionInfoResponse(
         Long auctionId,
         Long sellerId,
         String productName,
-        Long originPrice,
-        Long currentPrice,
+        long originPrice,
+        long currentPrice,
         @JsonInclude(NON_NULL)
         Long originStock,
         @JsonInclude(NON_NULL)
         Long currentStock,
-        Long maximumPurchaseLimitCount,
+        long maximumPurchaseLimitCount,
         PricePolicy pricePolicy,
         Duration variationDuration,
         LocalDateTime startedAt,
         LocalDateTime finishedAt
 ) {
-    public BuyerAuctionInfo {
+    public BuyerAuctionInfoResponse {
         validateNotNull(auctionId, "경매 ID");
         validateNotNull(sellerId, "판매자 ID");
         validateNotNull(productName, "상품 이름");
