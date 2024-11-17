@@ -2,7 +2,7 @@ package org.indoles.autionserviceserver.core.infra;
 
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.domain.ConstantPricePolicy;
-import org.indoles.autionserviceserver.core.auction.dto.AuctionSearchCondition;
+import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchConditionRequest;
 import org.indoles.autionserviceserver.core.auction.dto.SellerAuctionSearchCondition;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 import org.indoles.autionserviceserver.core.auction.infra.AuctionRepository;
@@ -195,7 +195,7 @@ class AuctionCoreRepository extends RepositoryTest {
     }
 
     @Nested
-    class findAllBy_BuyerAuctionSearchCondition_Method {
+    class findAllBy_BuyerAuctionSearchCondition_Request_Method {
 
         @ParameterizedTest
         @CsvSource({
@@ -208,7 +208,7 @@ class AuctionCoreRepository extends RepositoryTest {
         void findAllBy_BuyerAuctionSearchCondition_Success(int offset, int size, int expectedSize) {
             // given
             createAuctions(10);
-            AuctionSearchCondition condition = new AuctionSearchCondition(offset, size);
+            AuctionSearchConditionRequest condition = new AuctionSearchConditionRequest(offset, size);
 
             // when
             List<Auction> auctions = auctionRepository.findAllBy(condition);
@@ -236,7 +236,7 @@ class AuctionCoreRepository extends RepositoryTest {
         @DisplayName("조건에 해당하는 경매가 없으면 정상 반환한다")
         void findAllBy_BuyerAuctionSearchCondition_NoResult() {
             // given
-            AuctionSearchCondition condition = new AuctionSearchCondition(0, 10);
+            AuctionSearchConditionRequest condition = new AuctionSearchConditionRequest(0, 10);
 
             // when
             List<Auction> auctions = auctionRepository.findAllBy(condition);
@@ -273,7 +273,7 @@ class AuctionCoreRepository extends RepositoryTest {
     }
 
     @Nested
-    class findAllBy_SellerAuctionSearchCondition_Method {
+    class findAllBy_SellerAuctionSearchCondition_Request_Method {
 
         @ParameterizedTest
         @CsvSource({

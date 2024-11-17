@@ -22,7 +22,7 @@ public class ValidateAuctionDto {
 
 
     /**
-     * AuctionInfo DTO에서 공통적으로 사용되는 유효성 검사
+     * AuctionInfo DTO에서 사용되는 유효성 검사
      */
 
     public static void validateProductName(String productName) {
@@ -81,7 +81,7 @@ public class ValidateAuctionDto {
     }
 
     /**
-     * 경매 상품에 대해서 조회할 때의 유효성 검사
+     * AuctionSearch DTO에서 사용되는 유효성 검사
      *
      * @param from
      * @param to
