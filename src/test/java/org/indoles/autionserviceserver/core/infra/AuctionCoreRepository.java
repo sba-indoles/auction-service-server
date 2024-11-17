@@ -31,7 +31,7 @@ class AuctionCoreRepository extends RepositoryTest {
     class findByAuctionId_Method {
 
         @Test
-        @DisplayName("경매의_id로_경매를_조회한다")
+        @DisplayName("경매의 id로 경매를 조회한다")
         void findByAuctionId_Success() {
             // given
             LocalDateTime now = LocalDateTime.now();
@@ -75,7 +75,7 @@ class AuctionCoreRepository extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("경매의_id에_해당하는_경매가_없으면_empty를_반환한다")
+        @DisplayName("경매의 id에 해당하는 경매가 없으면 empty를 반환한다")
         void findByAuctionId_Fail() {
             // given
             Long notExistId = 1L;
@@ -89,10 +89,10 @@ class AuctionCoreRepository extends RepositoryTest {
     }
 
     @Nested
-    class save_Auction_Method {
+    class saveAuction_Method {
 
         @Test
-        @DisplayName("경매_도메인_엔티티를_받으면_정상적으로_수행한다")
+        @DisplayName("경매 도메인 엔티티를 받으면 정상적으로 수행한다")
         void Transactional_save_Auction_Success() {
             // given
             LocalDateTime now = LocalDateTime.now();
@@ -135,7 +135,7 @@ class AuctionCoreRepository extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("이미_등록된_경매 상품인_경우_정상적으로_수정한다")
+        @DisplayName("이미 등록된 경매 상품인 경우 정상적으로_수정한다")
         void Transactional_save_Auction_Update_Success() {
             // given
             LocalDateTime now = LocalDateTime.now();
@@ -204,7 +204,7 @@ class AuctionCoreRepository extends RepositoryTest {
                 "2, 4, 4",  // 세 번째 페이지, 크기 4
                 "0, 10, 10" // 첫 번째 페이지, 크기 10
         })
-        @DisplayName("검색조건을_받으면_정상적으로_처리한다")
+        @DisplayName("검색조건을 받으면 정상적으로 처리한다")
         void findAllBy_BuyerAuctionSearchCondition_Success(int offset, int size, int expectedSize) {
             // given
             createAuctions(10);
@@ -233,7 +233,7 @@ class AuctionCoreRepository extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("조건에_해당하는_경매가_없으면_정상_반환한다")
+        @DisplayName("조건에 해당하는 경매가 없으면 정상 반환한다")
         void findAllBy_BuyerAuctionSearchCondition_NoResult() {
             // given
             AuctionSearchCondition condition = new AuctionSearchCondition(0, 10);
@@ -281,7 +281,7 @@ class AuctionCoreRepository extends RepositoryTest {
                 "0, 10, 1"  // 첫 번째 페이지, 크기 10
         })
 
-        @DisplayName("검색조건을_받으면_정상적으로_처리한다")
+        @DisplayName("검색조건을 받으면 정상적으로 처리한다")
         void findAllBy_SellerAuctionSearchCondition_Success(int offset, int size, int expectedSize) {
             // given
             long sellerId = 1L;
@@ -328,7 +328,7 @@ class AuctionCoreRepository extends RepositoryTest {
         class AuctionDeleteById_Method {
 
             @Test
-            @DisplayName("경매_식별번호가_전달되면_정상적으로_삭제된다")
+            @DisplayName("경매 식별번호가 전달되면 정상적으로 삭제된다")
             void auctionDeleteById_Success() {
                 // given
                 AuctionEntity entity = AuctionEntity.builder().build();
