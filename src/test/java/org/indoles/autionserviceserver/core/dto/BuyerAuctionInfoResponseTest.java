@@ -44,7 +44,7 @@ class BuyerAuctionInfoResponseTest {
 
     @Test
     @DisplayName("경매 정보 생성 요청을 정상적으로 처리한다")
-    void createAuctionInfoRequest() {
+    void createAuctionInfoRequest_Success() {
         // given
         Long auctionId = 1L;
         Long sellerId = 1L;

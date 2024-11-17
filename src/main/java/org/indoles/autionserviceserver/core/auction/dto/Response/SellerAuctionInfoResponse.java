@@ -1,4 +1,4 @@
-package org.indoles.autionserviceserver.core.auction.dto;
+package org.indoles.autionserviceserver.core.auction.dto.Response;
 
 import lombok.Builder;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
@@ -6,7 +6,6 @@ import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.*;
 import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.*;
 
 /**
@@ -27,21 +26,21 @@ import static org.indoles.autionserviceserver.core.auction.dto.validateDto.Valid
  */
 
 @Builder
-public record SellerAuctionInfo(
+public record SellerAuctionInfoResponse(
         Long auctionId,
         String productName,
-        Long originPrice,
-        Long currentPrice,
-        Long originStock,
-        Long currentStock,
-        Long maximumPurchaseLimitCount,
+        long originPrice,
+        long currentPrice,
+        long originStock,
+        long currentStock,
+        long maximumPurchaseLimitCount,
         PricePolicy pricePolicy,
         Duration variationDuration,
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
         Boolean isShowStock
 ) {
-    public SellerAuctionInfo {
+    public SellerAuctionInfoResponse {
         validateNotNull(auctionId, "경매 ID");
         validateNotNull(productName, "상품 이름");
         validateNotNull(pricePolicy, "경매 유형");
