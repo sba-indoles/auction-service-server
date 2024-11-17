@@ -9,7 +9,7 @@ import static org.indoles.autionserviceserver.core.auction.domain.validate.Valid
 @Getter
 public class ConstantPricePolicy implements PricePolicy {
 
-    private PricePolicyType pricePolicyType = PricePolicyType.CONSTANT;
+    private PricePolicyType type = PricePolicyType.CONSTANT;
     private long variationWidth;
 
     public ConstantPricePolicy() {
@@ -29,7 +29,7 @@ public class ConstantPricePolicy implements PricePolicy {
 
     @Override
     public PricePolicyType getType() {
-        return pricePolicyType;
+        return type;
     }
 
     @Override
@@ -41,6 +41,6 @@ public class ConstantPricePolicy implements PricePolicy {
             return false;
         }
         ConstantPricePolicy that = (ConstantPricePolicy) o;
-        return variationWidth == that.variationWidth && pricePolicyType == that.pricePolicyType;
+        return variationWidth == that.variationWidth && type == that.type;
     }
 }

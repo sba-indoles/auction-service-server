@@ -6,6 +6,9 @@ import org.indoles.autionserviceserver.global.exception.ErrorCode;
 
 public class ValidatePercentPrice {
 
+    private static final double MINIMUM_RATE = 0.0;
+    private static final double MAXIMUM_RATE = 50.0;
+
     /**
      * 할인율 유효성 검사(비율 할인율)
      *
@@ -14,8 +17,6 @@ public class ValidatePercentPrice {
      */
 
     public static void validateDiscountRate(double discountRate) {
-        final double MINIMUM_RATE = 0.0;
-        final double MAXIMUM_RATE = 50.0;
 
         if (discountRate <= MINIMUM_RATE || discountRate > MAXIMUM_RATE) {
             String message = String.format("할인율은 %d%% 초과 %d%% 이하여야 합니다. 할인율: %f%%", (int) MINIMUM_RATE,

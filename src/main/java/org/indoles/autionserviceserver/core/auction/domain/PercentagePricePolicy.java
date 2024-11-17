@@ -2,19 +2,21 @@ package org.indoles.autionserviceserver.core.auction.domain;
 
 import lombok.Getter;
 import org.indoles.autionserviceserver.core.auction.domain.enums.PricePolicyType;
-import org.indoles.autionserviceserver.core.auction.domain.validate.ValidatePercentPrice;
 
-import java.util.Objects;
+import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidatePercentPrice.*;
 
 @Getter
 public class PercentagePricePolicy implements PricePolicy {
 
-    private PricePolicyType pricePolicyType = PricePolicyType.PERCENTAGE;
-    private final double percentage;
+    private final PricePolicyType type = PricePolicyType.PERCENTAGE;
+    private double discountRate;
 
-    public PercentagePricePolicy(double percentage) {
-        ValidatePercentPrice.validateDiscountRate(percentage);
-        this.percentage = percentage;
+    public PercentagePricePolicy() {
+    }
+
+    public PercentagePricePolicy(double discountRate) {
+        validateDiscountRate(discountRate);
+        this.discountRate = discountRate;
     }
 
     /**
@@ -28,7 +30,7 @@ public class PercentagePricePolicy implements PricePolicy {
     @Override
     public long calculatePriceAtVariation(long price, long variationCount) {
         long discountedPrice = price;
-        double discountFactor = (100 - percentage) / 100.0;
+        double discountFactor = (100 - discountRate) / 100.0;
 
         for (int i = 0; i < variationCount; i++) {
             discountedPrice = (long) Math.floor(discountedPrice * discountFactor);
@@ -45,7 +47,7 @@ public class PercentagePricePolicy implements PricePolicy {
 
     @Override
     public PricePolicyType getType() {
-        return pricePolicyType;
+        return type;
     }
 
     @Override
@@ -57,6 +59,6 @@ public class PercentagePricePolicy implements PricePolicy {
             return false;
         }
         PercentagePricePolicy that = (PercentagePricePolicy) o;
-        return Double.compare(percentage, that.percentage) == 0 && pricePolicyType == that.pricePolicyType;
+        return Double.compare(discountRate, that.discountRate) == 0 && type == that.type;
     }
 }
