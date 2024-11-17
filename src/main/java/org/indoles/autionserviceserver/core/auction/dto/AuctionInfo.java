@@ -2,7 +2,6 @@ package org.indoles.autionserviceserver.core.auction.dto;
 
 import lombok.Builder;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
-import org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,10 +30,10 @@ public record AuctionInfo(
         Long auctionId,
         Long sellerId,
         String productName,
-        Long originPrice,
-        Long currentPrice,
-        Long stock,
-        Long maximumPurchaseLimitCount,
+        long originPrice,
+        long currentPrice,
+        long stock,
+        long maximumPurchaseLimitCount,
         PricePolicy pricePolicy,
         Duration variationDuration,
         LocalDateTime startedAt,
@@ -61,11 +60,11 @@ public record AuctionInfo(
 
 
     public void validate() {
-        ValidateAuctionDto.validateProductName(productName);
-        ValidateAuctionDto.validateOriginPrice(originPrice);
-        ValidateAuctionDto.validateCurrentPrice(currentPrice);
-        ValidateAuctionDto.validateStock(stock);
-        ValidateAuctionDto.validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
-        ValidateAuctionDto.validateVariationDuration(variationDuration);
+        validateProductName(productName);
+        validateOriginPrice(originPrice);
+        validateCurrentPrice(currentPrice);
+        validateStock(stock);
+        validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
+        validateVariationDuration(variationDuration);
     }
 }

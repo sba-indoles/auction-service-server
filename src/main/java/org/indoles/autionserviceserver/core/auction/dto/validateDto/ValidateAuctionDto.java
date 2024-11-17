@@ -1,6 +1,5 @@
 package org.indoles.autionserviceserver.core.auction.dto.validateDto;
 
-import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
 
@@ -21,6 +20,10 @@ public class ValidateAuctionDto {
     private static final String ERROR_STARTED_AT = "경매의 시작시간은 반드시 요청 시간보다 늦어야 합니다. 요청 시간: %s, 시작 시간: %s";
     private static final String ERROR_AUCTION_TIME = "경매의 시작 시간은 종료 시간보다 이전이어야 합니다. 시작 시간: %s, 종료 시간: %s";
 
+
+    /**
+     * AuctionInfo DTO에서 공통적으로 사용되는 유효성 검사
+     */
 
     public static void validateProductName(String productName) {
         if (productName.trim().isEmpty()) {
