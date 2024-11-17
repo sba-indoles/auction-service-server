@@ -46,16 +46,7 @@ public record CreateAuctionRequest(
         validateVariationDuration(variationDuration);
         validateAuctionTime(startedAt, finishedAt);
         validateStartedAt(requestTime, startedAt);
-        validateStock(stock, maximumPurchaseLimitCount);    }
-
-//    public void validate() {
-//        validateProductName(productName);
-//        validateOriginPrice(originPrice);
-//        validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
-//        validateVariationDuration(variationDuration);
-//        validateAuctionTime(startedAt, finishedAt);
-//        validateStartedAt(requestTime, startedAt);
-//        validateStock(stock, maximumPurchaseLimitCount);
-//    }
+        validateStock(stock, maximumPurchaseLimitCount);
+    }
 }
 

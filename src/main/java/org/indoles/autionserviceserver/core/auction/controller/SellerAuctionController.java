@@ -4,9 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.SellerOnly;
+import org.indoles.autionserviceserver.core.auction.dto.Request.CancelAuctionRequest;
+import org.indoles.autionserviceserver.core.auction.dto.Request.CreateAuctionRequest;
+import org.indoles.autionserviceserver.core.auction.dto.Request.SellerAuctionSearchConditionRequest;
+import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionInfoResponse;
+import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionSimpleInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.SignInInfo;
-import org.indoles.autionserviceserver.core.auction.dto.*;
-import org.indoles.autionserviceserver.core.auction.service.AuctionService;
+import org.indoles.autionserviceserver.core.auction.service.SellerService;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
 import org.indoles.autionserviceserver.global.util.JwtTokenProvider;
@@ -23,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SellerAuctionController {
 
-    private final AuctionService auctionService;
+    private final SellerService sellerService;
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
@@ -34,7 +38,7 @@ public class SellerAuctionController {
     @PostMapping
     public ResponseEntity<Void> createAuction(
             @RequestHeader("Authorization") String authorizationHeader,
-            @RequestBody CreateAuctionCommand request,
+            @RequestBody CreateAuctionRequest request,
             @CurrentTime LocalDateTime now
     ) {
 
@@ -43,7 +47,7 @@ public class SellerAuctionController {
         if (jwtTokenProvider.validateToken(token)) {
             try {
                 SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
-                CreateAuctionCommand command = new CreateAuctionCommand(
+                CreateAuctionRequest command = new CreateAuctionRequest(
                         request.productName(),
                         request.originPrice(),
                         request.stock(),
@@ -55,7 +59,7 @@ public class SellerAuctionController {
                         request.finishedAt(),
                         request.isShowStock()
                 );
-                auctionService.createAuction(signInInfo, command);
+                sellerService.createAuction(signInInfo, command);
                 return ResponseEntity.ok().build();
             } catch (Exception e) {
                 log.error("Error creating auction: {}", e.getMessage());
@@ -83,8 +87,8 @@ public class SellerAuctionController {
         if (jwtTokenProvider.validateToken(token)) {
             try {
                 SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
-                CancelAuctionCommand command = new CancelAuctionCommand(now, auctionId);
-                auctionService.cancelAuction(signInInfo, command);
+                CancelAuctionRequest command = new CancelAuctionRequest(now, auctionId);
+                sellerService.cancelAuction(signInInfo, command);
             } catch (Exception e) {
                 log.error("Error cancel auction: {}", e.getMessage());
                 throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU01);
@@ -100,7 +104,7 @@ public class SellerAuctionController {
      */
     @SellerOnly
     @GetMapping("/seller")
-    public ResponseEntity<List<SellerAuctionSimpleInfo>> getSellerAuctions(
+    public ResponseEntity<List<SellerAuctionSimpleInfoResponse>> getSellerAuctions(
             @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam(name = "offset") int offset,
             @RequestParam(name = "size") int size
@@ -111,8 +115,8 @@ public class SellerAuctionController {
         if (jwtTokenProvider.validateToken(token)) {
             try {
                 SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
-                SellerAuctionSearchCondition condition = new SellerAuctionSearchCondition(signInInfo.id(), offset, size);
-                List<SellerAuctionSimpleInfo> infos = auctionService.getSellerAuctionSimpleInfos(condition);
+                SellerAuctionSearchConditionRequest condition = new SellerAuctionSearchConditionRequest(signInInfo.id(), offset, size);
+                List<SellerAuctionSimpleInfoResponse> infos = sellerService.getSellerAuctionSimpleInfos(condition);
                 return ResponseEntity.ok(infos);
             } catch (Exception e) {
                 log.error("Error creating auction: {}", e.getMessage());
@@ -130,7 +134,7 @@ public class SellerAuctionController {
 
     @SellerOnly
     @GetMapping("/{auctionId}/seller")
-    public ResponseEntity<SellerAuctionInfo> getSellerAuction(
+    public ResponseEntity<SellerAuctionInfoResponse> getSellerAuction(
             @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable("auctionId") Long auctionId
     ) {
@@ -140,7 +144,7 @@ public class SellerAuctionController {
         if (jwtTokenProvider.validateToken(token)) {
             try {
                 SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
-                SellerAuctionInfo info = auctionService.getSellerAuction(signInInfo, auctionId);
+                SellerAuctionInfoResponse info = sellerService.getSellerAuction(signInInfo, auctionId);
                 return ResponseEntity.ok(info);
             } catch (Exception e) {
                 log.error("Error searching auction: {}", e.getMessage());
