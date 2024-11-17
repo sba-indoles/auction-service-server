@@ -4,9 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.BuyerOnly;
+import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchConditionRequest;
+import org.indoles.autionserviceserver.core.auction.dto.Request.PurchaseRequest;
+import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionInfoResponse;
+import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionSimpleInfoResponse;
+import org.indoles.autionserviceserver.core.auction.dto.Response.PurchaseResponse;
 import org.indoles.autionserviceserver.core.auction.dto.SignInInfo;
-import org.indoles.autionserviceserver.core.auction.dto.*;
-import org.indoles.autionserviceserver.core.auction.service.AuctionService;
+import org.indoles.autionserviceserver.core.auction.service.BuyerService;
 import org.indoles.autionserviceserver.global.dto.AuctionPurchaseRequestMessage;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
@@ -26,7 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BuyerAuctionController {
 
-    private final AuctionService auctionService;
+    private final BuyerService buyerService;
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
@@ -34,10 +38,10 @@ public class BuyerAuctionController {
      */
 
     @GetMapping("/search")
-    public ResponseEntity<List<BuyerAuctionSimpleInfo>> getAuctions(@RequestParam(name = "offset") int offset,
-                                                                    @RequestParam(name = "size") int size) {
-        AuctionSearchCondition condition = new AuctionSearchCondition(offset, size);
-        List<BuyerAuctionSimpleInfo> infos = auctionService.getBuyerAuctionSimpleInfos(condition);
+    public ResponseEntity<List<BuyerAuctionSimpleInfoResponse>> getAuctions(@RequestParam(name = "offset") int offset,
+                                                                            @RequestParam(name = "size") int size) {
+        AuctionSearchConditionRequest condition = new AuctionSearchConditionRequest(offset, size);
+        List<BuyerAuctionSimpleInfoResponse> infos = buyerService.getBuyerAuctionSimpleInfos(condition);
         return ResponseEntity.ok(infos);
     }
 
@@ -46,7 +50,7 @@ public class BuyerAuctionController {
      */
     @BuyerOnly
     @GetMapping("/{auctionId}")
-    public ResponseEntity<BuyerAuctionInfo> getAuction(
+    public ResponseEntity<BuyerAuctionInfoResponse> getAuction(
             @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable("auctionId") Long auctionId) {
 
@@ -55,7 +59,7 @@ public class BuyerAuctionController {
         if (jwtTokenProvider.validateToken(token)) {
             try {
                 jwtTokenProvider.getSignInInfoFromToken(token);
-                BuyerAuctionInfo result = auctionService.getBuyerAuction(auctionId);
+                BuyerAuctionInfoResponse result = buyerService.getBuyerAuction(auctionId);
                 return ResponseEntity.ok(result);
             } catch (Exception e) {
                 log.error("Error during chargePoint: {}", e.getMessage());
@@ -90,7 +94,8 @@ public class BuyerAuctionController {
                         .quantity(purchaseRequest.quantity())
                         .requestTime(now)
                         .build();
-                auctionService.submitPurchase(auctionId, purchaseRequest.price(), purchaseRequest.quantity(), now);
+
+                buyerService.submitPurchase(auctionId, purchaseRequest.price(), purchaseRequest.quantity(), now, authorizationHeader);
                 PurchaseResponse response = new PurchaseResponse(requestMessage.requestId());
                 return ResponseEntity.ok(response);
             } catch (Exception e) {
@@ -119,7 +124,7 @@ public class BuyerAuctionController {
         if (jwtTokenProvider.validateToken(token)) {
             try {
                 jwtTokenProvider.getSignInInfoFromToken(token);
-                auctionService.cancelPurchase(auctionId, quantity);
+                buyerService.cancelPurchase(auctionId, quantity, authorizationHeader);
             } catch (Exception e) {
                 log.error("Error cancel Auction: {}", e.getMessage());
                 throw new InfraStructureException("서버 에러", ErrorCode.AU02);

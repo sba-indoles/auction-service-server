@@ -14,14 +14,10 @@ import org.indoles.autionserviceserver.global.exception.InfraStructureException;
 
 import java.io.IOException;
 
-
 @Converter
 public class PricePolicyConverter implements AttributeConverter<PricePolicy, String> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    public PricePolicyConverter() {
-    }
 
     @Override
     public String convertToDatabaseColumn(PricePolicy pricePolicy) {

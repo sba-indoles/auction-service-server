@@ -1,4 +1,4 @@
-package org.indoles.autionserviceserver.core.auction.dto;
+package org.indoles.autionserviceserver.core.auction.dto.Response;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
  * * @param finishedAt 경매 종료 시간
  */
 
-public record BuyerAuctionSimpleInfo(
-        Long id,
+public record BuyerAuctionSimpleInfoResponse(
+        long id,
         String title,
-        Long price,
+        long price,
         LocalDateTime startedAt,
         LocalDateTime finishedAt
 ) {

@@ -127,6 +127,18 @@ public class ValidateAuction {
     }
 
     /**
+     * 구매 당시 가격 검증
+     * @param inputPrice 구매 요청 가격
+     * @param actualPrice 현재 가격
+     */
+
+    public static void validateBuyPrice(long actualPrice, long inputPrice) {
+        if (actualPrice != inputPrice) {
+            String message = String.format("입력한 가격으로 상품을 구매할 수 없습니다. 현재가격: %d 입력가격: %d", actualPrice, inputPrice);
+            throw new BadRequestException(message, ErrorCode.A022);
+        }
+    }
+    /**
      * 현재 경매 상태 반환
      *
      * @param requestTime

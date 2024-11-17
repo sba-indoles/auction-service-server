@@ -2,8 +2,7 @@ package org.indoles.autionserviceserver.core.auction.domain;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+
 import org.indoles.autionserviceserver.core.auction.domain.enums.AuctionStatus;
 import org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
@@ -88,24 +87,30 @@ public class Auction {
 
     /**
      * 환불 요청 시 재고 상황
+     *
+     * @param refundStockAmount 환불 요청 수량
      */
 
     public void refundStock(long refundStockAmount) {
         long newCurrentStock = this.currentStock + refundStockAmount;
 
-        ValidateAuction.validateStock(this.currentStock, refundStockAmount, this.originStock);
+        validateStock(this.currentStock, refundStockAmount, this.originStock);
         this.currentStock = newCurrentStock;
     }
 
     /**
      * 경매 입찰(구매 요청)
+     *
+     * @param price       구매 요청 가격
+     * @param quantity    구매 요청 수량
+     * @param requestTime 구매 요청 시간
      */
 
     public void submit(long price, long quantity, LocalDateTime requestTime) {
         AuctionStatus currentStatus = ValidateAuction.currentStatus(requestTime, this);
 
         if (!currentStatus.isRunning()) {
-            ValidateAuction.validateAuctionBidStatus(requestTime, this);
+            validateAuctionBidStatus(requestTime, this);
         }
 
         verifyCurrentPrice(price, requestTime);
@@ -117,13 +122,9 @@ public class Auction {
     private void verifyCurrentPrice(long inputPrice, LocalDateTime requestTime) {
         Duration elapsedDuration = Duration.between(startedAt, requestTime);
         long currentVariationCount = elapsedDuration.dividedBy(variationDuration);
-
         long actualPrice = pricePolicy.calculatePriceAtVariation(originPrice, currentVariationCount);
 
-        if (actualPrice != inputPrice) {
-            String message = String.format("입력한 가격으로 상품을 구매할 수 없습니다. 현재가격: %d 입력가격: %d", actualPrice, inputPrice);
-            throw new BadRequestException(message, ErrorCode.A022);
-        }
+        validateBuyPrice(actualPrice, inputPrice);
     }
 
     private void verifyPurchaseQuantity(long quantity) {

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.indoles.autionserviceserver.core.auction.domain.enums.PricePolicyType;
 
+import static com.fasterxml.jackson.annotation.JsonTypeInfo.*;
+
 @JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.EXISTING_PROPERTY,
+        use = Id.NAME,
+        include = As.EXISTING_PROPERTY,
         property = "type"
 )
 @JsonSubTypes({

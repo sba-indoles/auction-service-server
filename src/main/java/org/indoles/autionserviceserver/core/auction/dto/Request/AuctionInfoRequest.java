@@ -1,8 +1,7 @@
-package org.indoles.autionserviceserver.core.auction.dto;
+package org.indoles.autionserviceserver.core.auction.dto.Request;
 
 import lombok.Builder;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
-import org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -27,14 +26,14 @@ import static org.indoles.autionserviceserver.core.auction.dto.validateDto.Valid
  */
 
 @Builder
-public record AuctionInfo(
+public record AuctionInfoRequest(
         Long auctionId,
         Long sellerId,
         String productName,
-        Long originPrice,
-        Long currentPrice,
-        Long stock,
-        Long maximumPurchaseLimitCount,
+        long originPrice,
+        long currentPrice,
+        long stock,
+        long maximumPurchaseLimitCount,
         PricePolicy pricePolicy,
         Duration variationDuration,
         LocalDateTime startedAt,
@@ -42,7 +41,7 @@ public record AuctionInfo(
         Boolean isShowStock
 ) {
 
-    public AuctionInfo {
+    public AuctionInfoRequest {
         validateNotNull(auctionId, "경매 ID");
         validateNotNull(sellerId, "판매자 ID");
         validateNotNull(productName, "상품 이름");
@@ -61,11 +60,11 @@ public record AuctionInfo(
 
 
     public void validate() {
-        ValidateAuctionDto.validateProductName(productName);
-        ValidateAuctionDto.validateOriginPrice(originPrice);
-        ValidateAuctionDto.validateCurrentPrice(currentPrice);
-        ValidateAuctionDto.validateStock(stock);
-        ValidateAuctionDto.validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
-        ValidateAuctionDto.validateVariationDuration(variationDuration);
+        validateProductName(productName);
+        validateOriginPrice(originPrice);
+        validateCurrentPrice(currentPrice);
+        validateStock(stock);
+        validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
+        validateVariationDuration(variationDuration);
     }
 }

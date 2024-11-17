@@ -1,4 +1,4 @@
-package org.indoles.autionserviceserver.core.auction.dto;
+package org.indoles.autionserviceserver.core.auction.dto.Request;
 
 import java.time.LocalDateTime;
 
@@ -12,15 +12,11 @@ import static org.indoles.autionserviceserver.core.auction.dto.validateDto.Valid
  * @param auctionId   취소할 경매 ID
  */
 
-public record CancelAuctionCommand(
+public record CancelAuctionRequest(
         LocalDateTime requestTime,
-        Long auctionId
+        long auctionId
 ) {
-    public CancelAuctionCommand {
-        validateNotNull(requestTime, "requestTime");
-    }
-
-    public void validate() {
+    public CancelAuctionRequest {
         validateNotNull(requestTime, "requestTime");
     }
 }
