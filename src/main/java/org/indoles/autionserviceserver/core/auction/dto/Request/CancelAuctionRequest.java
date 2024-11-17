@@ -19,8 +19,4 @@ public record CancelAuctionRequest(
     public CancelAuctionRequest {
         validateNotNull(requestTime, "requestTime");
     }
-
-    public void validate() {
-        validateNotNull(requestTime, "requestTime");
-    }
 }
