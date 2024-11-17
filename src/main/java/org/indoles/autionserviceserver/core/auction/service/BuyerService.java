@@ -7,8 +7,7 @@ import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchCon
 import org.indoles.autionserviceserver.core.auction.dto.Request.RefundRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Request.TransferPointRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Response.*;
-import org.indoles.autionserviceserver.core.auction.dto.Request.SellerAuctionSearchConditionRequest;
-import org.indoles.autionserviceserver.core.auction.dto.SignInInfo;
+import org.indoles.autionserviceserver.core.auction.dto.Response.SignInInfoResponse;
 import org.indoles.autionserviceserver.core.auction.infra.AuctionCoreRepository;
 import org.indoles.autionserviceserver.core.auction.utils.MemberFeignClient;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
@@ -64,8 +63,8 @@ public class BuyerService {
     private Long getUserIdFromToken(String authorizationHeader) {
         String token = authorizationHeader.substring(7); // "Bearer "를 제거
         if (jwtTokenProvider.validateToken(token)) {
-            SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
-            return signInInfo.id();
+            SignInInfoResponse signInInfoResponse = jwtTokenProvider.getSignInInfoFromToken(token);
+            return signInInfoResponse.id();
         } else {
             throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU00);
         }

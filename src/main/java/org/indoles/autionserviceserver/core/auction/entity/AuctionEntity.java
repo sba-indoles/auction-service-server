@@ -23,21 +23,16 @@ public class AuctionEntity {
     @NotNull
     private Long sellerId;
 
-    @NotNull
     private String productName;
 
-    @NotNull
     private long originPrice;
 
-    @NotNull
     private long currentPrice;
 
-    @NotNull
     private long originStock;
 
     private long currentStock;
 
-    @NotNull
     private long maximumPurchaseLimitCount;
 
     @Convert(converter = PricePolicyConverter.class)
@@ -52,7 +47,6 @@ public class AuctionEntity {
     @NotNull
     private LocalDateTime finishedAt;
 
-    @NonNull
     private boolean isShowStock;
 
     @Builder

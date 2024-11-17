@@ -9,7 +9,7 @@ import org.indoles.autionserviceserver.core.auction.dto.Request.PurchaseRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionSimpleInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.PurchaseResponse;
-import org.indoles.autionserviceserver.core.auction.dto.SignInInfo;
+import org.indoles.autionserviceserver.core.auction.dto.Response.SignInInfoResponse;
 import org.indoles.autionserviceserver.core.auction.service.BuyerService;
 import org.indoles.autionserviceserver.global.dto.AuctionPurchaseRequestMessage;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
@@ -85,10 +85,10 @@ public class BuyerAuctionController {
 
         if (jwtTokenProvider.validateToken(token)) {
             try {
-                SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
+                SignInInfoResponse signInInfoResponse = jwtTokenProvider.getSignInInfoFromToken(token);
                 AuctionPurchaseRequestMessage requestMessage = AuctionPurchaseRequestMessage.builder()
                         .requestId(UUID.randomUUID())
-                        .buyerId(signInInfo.id())
+                        .buyerId(signInInfoResponse.id())
                         .auctionId(auctionId)
                         .price(purchaseRequest.price())
                         .quantity(purchaseRequest.quantity())

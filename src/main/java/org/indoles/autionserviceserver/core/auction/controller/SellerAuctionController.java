@@ -9,7 +9,7 @@ import org.indoles.autionserviceserver.core.auction.dto.Request.CreateAuctionReq
 import org.indoles.autionserviceserver.core.auction.dto.Request.SellerAuctionSearchConditionRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionSimpleInfoResponse;
-import org.indoles.autionserviceserver.core.auction.dto.SignInInfo;
+import org.indoles.autionserviceserver.core.auction.dto.Response.SignInInfoResponse;
 import org.indoles.autionserviceserver.core.auction.service.SellerService;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
@@ -46,7 +46,7 @@ public class SellerAuctionController {
 
         if (jwtTokenProvider.validateToken(token)) {
             try {
-                SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
+                SignInInfoResponse signInInfoResponse = jwtTokenProvider.getSignInInfoFromToken(token);
                 CreateAuctionRequest command = new CreateAuctionRequest(
                         request.productName(),
                         request.originPrice(),
@@ -59,7 +59,7 @@ public class SellerAuctionController {
                         request.finishedAt(),
                         request.isShowStock()
                 );
-                sellerService.createAuction(signInInfo, command);
+                sellerService.createAuction(signInInfoResponse, command);
                 return ResponseEntity.ok().build();
             } catch (Exception e) {
                 log.error("Error creating auction: {}", e.getMessage());
@@ -86,9 +86,9 @@ public class SellerAuctionController {
 
         if (jwtTokenProvider.validateToken(token)) {
             try {
-                SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
+                SignInInfoResponse signInInfoResponse = jwtTokenProvider.getSignInInfoFromToken(token);
                 CancelAuctionRequest command = new CancelAuctionRequest(now, auctionId);
-                sellerService.cancelAuction(signInInfo, command);
+                sellerService.cancelAuction(signInInfoResponse, command);
             } catch (Exception e) {
                 log.error("Error cancel auction: {}", e.getMessage());
                 throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU01);
@@ -114,8 +114,8 @@ public class SellerAuctionController {
 
         if (jwtTokenProvider.validateToken(token)) {
             try {
-                SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
-                SellerAuctionSearchConditionRequest condition = new SellerAuctionSearchConditionRequest(signInInfo.id(), offset, size);
+                SignInInfoResponse signInInfoResponse = jwtTokenProvider.getSignInInfoFromToken(token);
+                SellerAuctionSearchConditionRequest condition = new SellerAuctionSearchConditionRequest(signInInfoResponse.id(), offset, size);
                 List<SellerAuctionSimpleInfoResponse> infos = sellerService.getSellerAuctionSimpleInfos(condition);
                 return ResponseEntity.ok(infos);
             } catch (Exception e) {
@@ -143,8 +143,8 @@ public class SellerAuctionController {
 
         if (jwtTokenProvider.validateToken(token)) {
             try {
-                SignInInfo signInInfo = jwtTokenProvider.getSignInInfoFromToken(token);
-                SellerAuctionInfoResponse info = sellerService.getSellerAuction(signInInfo, auctionId);
+                SignInInfoResponse signInInfoResponse = jwtTokenProvider.getSignInInfoFromToken(token);
+                SellerAuctionInfoResponse info = sellerService.getSellerAuction(signInInfoResponse, auctionId);
                 return ResponseEntity.ok(info);
             } catch (Exception e) {
                 log.error("Error searching auction: {}", e.getMessage());

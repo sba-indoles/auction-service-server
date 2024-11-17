@@ -134,4 +134,13 @@ public class ValidateAuctionDto {
             throw new BadRequestException(String.format(ERROR_NULL_VALUE, fieldName), ErrorCode.G000);
         }
     }
+
+    /**
+     * 경매 조회 DTO에서 사용되는 유효성 검사
+     */
+    public static void validateOffset(int offset) {
+        if (offset < 0) {
+            throw new BadRequestException("offset은 0 이상의 값이어야 합니다.", ErrorCode.G002);
+        }
+    }
 }

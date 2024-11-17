@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.domain.enums.Role;
-import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.dto.Request.CancelAuctionRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Request.CreateAuctionRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Request.SellerAuctionSearchConditionRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionSimpleInfoResponse;
+import org.indoles.autionserviceserver.core.auction.dto.Response.SignInInfoResponse;
 import org.indoles.autionserviceserver.core.auction.infra.AuctionCoreRepository;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
@@ -37,7 +37,7 @@ public class SellerService {
      */
 
     @Transactional
-    public void createAuction(SignInInfo sellerInfo, CreateAuctionRequest createAuctionRequest) {
+    public void createAuction(SignInInfoResponse sellerInfo, CreateAuctionRequest createAuctionRequest) {
         try {
             Auction auction = Auction.builder()
                     .sellerId(sellerInfo.id())
@@ -64,19 +64,19 @@ public class SellerService {
     /**
      * 경매 시작 전, 등록한 경매에 대해서 취소하는 서비스 로직
      *
-     * @param signInInfo 경매를 취소하려는 사용자 정보
+     * @param signInInfoResponse 경매를 취소하려는 사용자 정보
      */
 
     @Transactional
-    public void cancelAuction(SignInInfo signInInfo, CancelAuctionRequest command) {
+    public void cancelAuction(SignInInfoResponse signInInfoResponse, CancelAuctionRequest command) {
         try {
-            if (!signInInfo.isType(Role.SELLER)) {
+            if (!signInInfoResponse.isType(Role.SELLER)) {
                 throw new AuthorizationException("판매자만 경매를 취소할 수 있습니다.", ErrorCode.A017);
             }
 
             Auction auction = findAuctionObject(command.auctionId());
 
-            if (!auction.isSeller(signInInfo.id())) {
+            if (!auction.isSeller(signInInfoResponse.id())) {
                 throw new AuthorizationException("자신이 등록한 경매만 취소할 수 있습니다.", ErrorCode.A018);
             }
             if (!auction.currentStatus(command.requestTime()).isWaiting()) {
@@ -123,7 +123,7 @@ public class SellerService {
      *                   return 판매자용 경매 정보
      */
 
-    public SellerAuctionInfoResponse getSellerAuction(SignInInfo sellerInfo, long auctionId) {
+    public SellerAuctionInfoResponse getSellerAuction(SignInInfoResponse sellerInfo, long auctionId) {
         try {
             Auction auction = findAuctionObject(auctionId);
 

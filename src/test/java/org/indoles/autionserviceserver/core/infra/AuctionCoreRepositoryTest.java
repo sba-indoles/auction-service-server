@@ -22,7 +22,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class AuctionCoreRepository extends RepositoryTest {
+class AuctionCoreRepositoryTest extends RepositoryTest {
 
     @Autowired
     private AuctionRepository auctionRepository;

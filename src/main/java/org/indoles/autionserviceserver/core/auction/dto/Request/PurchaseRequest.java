@@ -1,8 +1,5 @@
 package org.indoles.autionserviceserver.core.auction.dto.Request;
 
-import org.indoles.autionserviceserver.global.exception.BadRequestException;
-import org.indoles.autionserviceserver.global.exception.ErrorCode;
-
 import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.validatePrice;
 import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.validateQuantity;
 
