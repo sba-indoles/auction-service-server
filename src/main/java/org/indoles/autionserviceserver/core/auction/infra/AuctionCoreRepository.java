@@ -3,7 +3,7 @@ package org.indoles.autionserviceserver.core.auction.infra;
 import lombok.RequiredArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchConditionRequest;
-import org.indoles.autionserviceserver.core.auction.dto.SellerAuctionSearchCondition;
+import org.indoles.autionserviceserver.core.auction.dto.Request.SellerAuctionSearchConditionRequest;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 import org.indoles.autionserviceserver.global.util.Mapper;
 import org.springframework.stereotype.Repository;
@@ -43,7 +43,7 @@ public class AuctionCoreRepository implements AuctionRepository {
     }
 
     @Override
-    public List<Auction> findAllBy(SellerAuctionSearchCondition condition) {
+    public List<Auction> findAllBy(SellerAuctionSearchConditionRequest condition) {
         List<AuctionEntity> entities = auctionJpaRepository.findAllBy(condition);
         return entities.stream()
                 .map(Mapper::convertToAuction)

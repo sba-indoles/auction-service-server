@@ -3,10 +3,11 @@ package org.indoles.autionserviceserver.global.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
-import org.indoles.autionserviceserver.core.auction.dto.*;
 import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionInfoRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionSimpleInfoResponse;
+import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionInfoResponse;
+import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionSimpleInfoResponse;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -48,8 +49,8 @@ public class Mapper {
                 .build();
     }
 
-    public static SellerAuctionInfo convertToSellerAuctionInfo(Auction auction) {
-        return SellerAuctionInfo.builder()
+    public static SellerAuctionInfoResponse convertToSellerAuctionInfo(Auction auction) {
+        return SellerAuctionInfoResponse.builder()
                 .auctionId(auction.getId())
                 .productName(auction.getProductName())
                 .originPrice(auction.getOriginPrice())
@@ -111,8 +112,8 @@ public class Mapper {
         );
     }
 
-    public static SellerAuctionSimpleInfo convertToSellerAuctionSimpleInfo(Auction auction) {
-        return new SellerAuctionSimpleInfo(
+    public static SellerAuctionSimpleInfoResponse convertToSellerAuctionSimpleInfo(Auction auction) {
+        return new SellerAuctionSimpleInfoResponse(
                 auction.getId(),
                 auction.getProductName(),
                 auction.getOriginPrice(),

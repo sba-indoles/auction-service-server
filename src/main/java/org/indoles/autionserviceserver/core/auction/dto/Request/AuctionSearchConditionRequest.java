@@ -1,7 +1,5 @@
 package org.indoles.autionserviceserver.core.auction.dto.Request;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.validateSizeBetween;
 

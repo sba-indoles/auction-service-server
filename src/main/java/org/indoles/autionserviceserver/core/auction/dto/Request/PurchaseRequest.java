@@ -1,4 +1,4 @@
-package org.indoles.autionserviceserver.core.auction.dto;
+package org.indoles.autionserviceserver.core.auction.dto.Request;
 
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;

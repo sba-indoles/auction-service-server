@@ -1,7 +1,6 @@
-package org.indoles.autionserviceserver.core.auction.dto;
+package org.indoles.autionserviceserver.core.auction.dto.Request;
 
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
-import org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -21,35 +20,42 @@ import static org.indoles.autionserviceserver.core.auction.dto.validateDto.Valid
  * @param startedAt                 경매 시작 시간
  * @param finishedAt                경매 종료 시간
  */
-public record CreateAuctionCommand(
+public record CreateAuctionRequest(
         String productName,
-        Long originPrice,
-        Long stock,
-        Long maximumPurchaseLimitCount,
+        long originPrice,
+        long stock,
+        long maximumPurchaseLimitCount,
         PricePolicy pricePolicy,
         Duration variationDuration,
         LocalDateTime requestTime,
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
-        Boolean isShowStock
+        boolean isShowStock
 ) {
-    public CreateAuctionCommand {
+    public CreateAuctionRequest {
         validateNotNull(productName, "상품 이름");
         validateNotNull(pricePolicy, "경매 유형");
         validateNotNull(variationDuration, "가격 변동 주기");
-        //validateNotNull(requestTime, "요청 시간");
+        validateNotNull(requestTime, "요청 시간");
         validateNotNull(startedAt, "경매 시작 시간");
         validateNotNull(finishedAt, "경매 종료 시간");
-    }
 
-    public void validate() {
         validateProductName(productName);
         validateOriginPrice(originPrice);
         validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
         validateVariationDuration(variationDuration);
-        ValidateAuctionDto.validateAuctionTime(startedAt, finishedAt);
-        //validateStartedAt(requestTime, startedAt);
-        validateStock(stock, maximumPurchaseLimitCount);
-    }
+        validateAuctionTime(startedAt, finishedAt);
+        validateStartedAt(requestTime, startedAt);
+        validateStock(stock, maximumPurchaseLimitCount);    }
+
+//    public void validate() {
+//        validateProductName(productName);
+//        validateOriginPrice(originPrice);
+//        validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
+//        validateVariationDuration(variationDuration);
+//        validateAuctionTime(startedAt, finishedAt);
+//        validateStartedAt(requestTime, startedAt);
+//        validateStock(stock, maximumPurchaseLimitCount);
+//    }
 }
 

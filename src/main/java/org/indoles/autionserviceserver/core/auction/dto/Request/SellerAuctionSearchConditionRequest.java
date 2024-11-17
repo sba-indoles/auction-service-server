@@ -1,4 +1,4 @@
-package org.indoles.autionserviceserver.core.auction.dto;
+package org.indoles.autionserviceserver.core.auction.dto.Request;
 
 /**
  * 판매자가 경매를 조회할때의 조건
@@ -12,12 +12,12 @@ import org.springframework.data.domain.Pageable;
 
 import static org.indoles.autionserviceserver.core.auction.dto.validateDto.ValidateAuctionDto.validateSizeBetween;
 
-public record SellerAuctionSearchCondition(
+public record SellerAuctionSearchConditionRequest(
         long sellerId,
         int offset,
         int size
 ) {
-    public SellerAuctionSearchCondition {
+    public SellerAuctionSearchConditionRequest {
         validateSizeBetween(1, 100, size);
     }
 

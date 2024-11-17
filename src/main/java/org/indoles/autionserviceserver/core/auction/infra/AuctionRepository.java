@@ -2,7 +2,7 @@ package org.indoles.autionserviceserver.core.auction.infra;
 
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchConditionRequest;
-import org.indoles.autionserviceserver.core.auction.dto.SellerAuctionSearchCondition;
+import org.indoles.autionserviceserver.core.auction.dto.Request.SellerAuctionSearchConditionRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +17,7 @@ public interface AuctionRepository {
 
     List<Auction> findAllBy(AuctionSearchConditionRequest condition);
 
-    List<Auction> findAllBy(SellerAuctionSearchCondition condition);
+    List<Auction> findAllBy(SellerAuctionSearchConditionRequest condition);
 
     Optional<Auction> findByIdForUpdate(long auctionId);
 }

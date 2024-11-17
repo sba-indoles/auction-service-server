@@ -40,7 +40,8 @@ public class ValidateAuctionDto {
     public static void validateMaximumPurchaseLimitCount(long maximumPurchaseLimitCount) {
         if (maximumPurchaseLimitCount <= 0) {
             throw new BadRequestException(String.format(ERROR_MAXIMUM_PURCHASE_LIMIT_COUNT, maximumPurchaseLimitCount),
-                    ErrorCode.A003);        }
+                    ErrorCode.A003);
+        }
     }
 
     public static void validateVariationDuration(Duration variationDuration) {

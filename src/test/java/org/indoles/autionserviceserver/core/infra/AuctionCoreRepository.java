@@ -3,7 +3,7 @@ package org.indoles.autionserviceserver.core.infra;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.domain.ConstantPricePolicy;
 import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchConditionRequest;
-import org.indoles.autionserviceserver.core.auction.dto.SellerAuctionSearchCondition;
+import org.indoles.autionserviceserver.core.auction.dto.Request.SellerAuctionSearchConditionRequest;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 import org.indoles.autionserviceserver.core.auction.infra.AuctionRepository;
 import org.indoles.autionserviceserver.core.context.RepositoryTest;
@@ -273,7 +273,7 @@ class AuctionCoreRepository extends RepositoryTest {
     }
 
     @Nested
-    class findAllBy_SellerAuctionSearchCondition_Request_Method {
+    class findAllBy_SellerAuctionSearchCondition_Request_Request_Method {
 
         @ParameterizedTest
         @CsvSource({
@@ -286,7 +286,7 @@ class AuctionCoreRepository extends RepositoryTest {
             // given
             long sellerId = 1L;
             createAuctions(10);
-            SellerAuctionSearchCondition condition = new SellerAuctionSearchCondition(sellerId, offset, size);
+            SellerAuctionSearchConditionRequest condition = new SellerAuctionSearchConditionRequest(sellerId, offset, size);
 
             // when
             List<Auction> auctions = auctionRepository.findAllBy(condition);
@@ -315,7 +315,7 @@ class AuctionCoreRepository extends RepositoryTest {
         void findAllBy_SellerAuctionSearchCondition_NoResult() {
             // given
             long sellerId = 1L;
-            SellerAuctionSearchCondition condition = new SellerAuctionSearchCondition(sellerId, 0, 10);
+            SellerAuctionSearchConditionRequest condition = new SellerAuctionSearchConditionRequest(sellerId, 0, 10);
 
             // when
             List<Auction> auctions = auctionRepository.findAllBy(condition);
