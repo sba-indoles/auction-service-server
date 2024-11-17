@@ -27,19 +27,19 @@ public class AuctionEntity {
     private String productName;
 
     @NotNull
-    private Long originPrice;
+    private long originPrice;
 
     @NotNull
-    private Long currentPrice;
+    private long currentPrice;
 
     @NotNull
-    private Long originStock;
+    private long originStock;
 
     @NotNull
-    private Long currentStock;
+    private long currentStock;
 
     @NotNull
-    private Long maximumPurchaseLimitCount;
+    private long maximumPurchaseLimitCount;
 
     @Convert(converter = PricePolicyConverter.class)
     private PricePolicy pricePolicy;
@@ -47,25 +47,25 @@ public class AuctionEntity {
     @NotNull
     private Duration variationDuration;
 
-    @NonNull
-    private boolean isShowStock;
-
     @NotNull
     private LocalDateTime startedAt;
 
     @NotNull
     private LocalDateTime finishedAt;
 
+    @NonNull
+    private boolean isShowStock;
+
     @Builder
     private AuctionEntity(
             Long id,
             Long sellerId,
             String productName,
-            Long originPrice,
-            Long currentPrice,
-            Long originStock,
-            Long currentStock,
-            Long maximumPurchaseLimitCount,
+            long originPrice,
+            long currentPrice,
+            long originStock,
+            long currentStock,
+            long maximumPurchaseLimitCount,
             PricePolicy pricePolicy,
             Duration variationDuration,
             LocalDateTime startedAt,
