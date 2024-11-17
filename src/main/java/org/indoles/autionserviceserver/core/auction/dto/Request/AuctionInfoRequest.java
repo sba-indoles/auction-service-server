@@ -1,4 +1,4 @@
-package org.indoles.autionserviceserver.core.auction.dto;
+package org.indoles.autionserviceserver.core.auction.dto.Request;
 
 import lombok.Builder;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
@@ -26,7 +26,7 @@ import static org.indoles.autionserviceserver.core.auction.dto.validateDto.Valid
  */
 
 @Builder
-public record AuctionInfo(
+public record AuctionInfoRequest(
         Long auctionId,
         Long sellerId,
         String productName,
@@ -41,7 +41,7 @@ public record AuctionInfo(
         Boolean isShowStock
 ) {
 
-    public AuctionInfo {
+    public AuctionInfoRequest {
         validateNotNull(auctionId, "경매 ID");
         validateNotNull(sellerId, "판매자 ID");
         validateNotNull(productName, "상품 이름");

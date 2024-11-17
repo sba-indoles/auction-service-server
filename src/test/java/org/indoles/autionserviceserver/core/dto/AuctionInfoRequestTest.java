@@ -2,7 +2,7 @@ package org.indoles.autionserviceserver.core.dto;
 
 import org.indoles.autionserviceserver.core.auction.domain.ConstantPricePolicy;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
-import org.indoles.autionserviceserver.core.auction.dto.AuctionInfo;
+import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionInfoRequest;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class AuctionInfoTest {
+class AuctionInfoRequestTest {
     static Stream<Arguments> auctionInfoDtoArguments() {
         return Stream.of(
                 Arguments.of("상품 이름은 비어있을 수 없습니다.",
@@ -60,22 +60,22 @@ class AuctionInfoTest {
         LocalDateTime finishedAt = LocalDateTime.now();
 
         // when
-        AuctionInfo auctionInfo = new AuctionInfo(auctionId, sellerId, productName, originPrice, currentPrice, stock,
+        AuctionInfoRequest auctionInfoRequest = new AuctionInfoRequest(auctionId, sellerId, productName, originPrice, currentPrice, stock,
                 maximumPurchaseLimitCount, pricePolicy, varitationDuration, startedAt, finishedAt, true);
 
         // then
         assertAll(
-                () -> assertThat(auctionInfo.sellerId()).isEqualTo(sellerId),
-                () -> assertThat(auctionInfo.productName()).isEqualTo(productName),
-                () -> assertThat(auctionInfo.originPrice()).isEqualTo(originPrice),
-                () -> assertThat(auctionInfo.currentPrice()).isEqualTo(currentPrice),
-                () -> assertThat(auctionInfo.stock()).isEqualTo(stock),
-                () -> assertThat(auctionInfo.maximumPurchaseLimitCount()).isEqualTo(maximumPurchaseLimitCount),
-                () -> assertThat(auctionInfo.pricePolicy()).isEqualTo(pricePolicy),
-                () -> assertThat(auctionInfo.variationDuration()).isEqualTo(varitationDuration),
-                () -> assertThat(auctionInfo.startedAt()).isEqualTo(startedAt),
-                () -> assertThat(auctionInfo.finishedAt()).isEqualTo(finishedAt),
-                () -> assertThat(auctionInfo.isShowStock()).isTrue()
+                () -> assertThat(auctionInfoRequest.sellerId()).isEqualTo(sellerId),
+                () -> assertThat(auctionInfoRequest.productName()).isEqualTo(productName),
+                () -> assertThat(auctionInfoRequest.originPrice()).isEqualTo(originPrice),
+                () -> assertThat(auctionInfoRequest.currentPrice()).isEqualTo(currentPrice),
+                () -> assertThat(auctionInfoRequest.stock()).isEqualTo(stock),
+                () -> assertThat(auctionInfoRequest.maximumPurchaseLimitCount()).isEqualTo(maximumPurchaseLimitCount),
+                () -> assertThat(auctionInfoRequest.pricePolicy()).isEqualTo(pricePolicy),
+                () -> assertThat(auctionInfoRequest.variationDuration()).isEqualTo(varitationDuration),
+                () -> assertThat(auctionInfoRequest.startedAt()).isEqualTo(startedAt),
+                () -> assertThat(auctionInfoRequest.finishedAt()).isEqualTo(finishedAt),
+                () -> assertThat(auctionInfoRequest.isShowStock()).isTrue()
         );
     }
 
@@ -98,7 +98,7 @@ class AuctionInfoTest {
             boolean isShowStock
     ) {
         // expect
-        assertThatThrownBy(() -> AuctionInfo.builder()
+        assertThatThrownBy(() -> AuctionInfoRequest.builder()
                 .auctionId(auctionId)
                 .sellerId(sellerId)
                 .productName(productName)

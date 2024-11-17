@@ -4,12 +4,13 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.dto.*;
+import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionInfoRequest;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Mapper {
-    public static AuctionInfo convertToAuctionInfo(Auction auction) {
-        return AuctionInfo.builder()
+    public static AuctionInfoRequest convertToAuctionInfo(Auction auction) {
+        return AuctionInfoRequest.builder()
                 .auctionId(auction.getId())
                 .sellerId(auction.getSellerId())
                 .productName(auction.getProductName())
