@@ -16,7 +16,7 @@ class PercentagePricePolicyTest {
     @ParameterizedTest
     @ValueSource(doubles = {0, 100})
     @DisplayName("경매 할인율은 0보다 크고 50보다 작거나 같지 않다면 예외가 발생한다.")
-    void AuctionDiscountRateIsNotBetweenZeroAndFifty(double discountRate) {
+    void auction_PercentPricePolicy_DiscountRate_Fail(double discountRate) {
         // expect
         assertThatThrownBy(() -> new PercentagePricePolicy(discountRate))
                 .isInstanceOf(BadRequestException.class)
@@ -27,7 +27,7 @@ class PercentagePricePolicyTest {
     @ParameterizedTest
     @ValueSource(doubles = {0.1, 50.0})
     @DisplayName("유효한 할인율로 PercentagePricePolicy 를 생성할 수 있다")
-    void createPercentagePricePolicyWithValidDiscountRate(double discountRate) {
+    void create_PercentPricePolicy_Success(double discountRate) {
         // expect
         assertThatNoException().isThrownBy(() -> new PercentagePricePolicy(discountRate));
     }
@@ -35,7 +35,7 @@ class PercentagePricePolicyTest {
     @ParameterizedTest
     @ValueSource(doubles = {0.0, 50.1})
     @DisplayName("할인율이 0프로 이하이거나 50프로 초과이면 예외가 발생한다")
-    void PercentagePricePolicyIsCreatedWithInvalidDiscountRate(double invalidRate) {
+    void create_PercentPricePolicy_InvalidDiscountRate(double invalidRate) {
         // expect
         String message = String.format("할인율은 %d%% 초과 %d%% 이하여야 합니다. 할인율: %f%%", 0, 50, invalidRate);
         assertThatThrownBy(() -> new PercentagePricePolicy(invalidRate))
@@ -46,7 +46,7 @@ class PercentagePricePolicyTest {
 
     @Test
     @DisplayName("가격과 할인횟수가 주어지면 횟수만큼 할인이 적용된 가격을 계산한다")
-    void calculatePriceAtVariation() {
+    void calculatePrice_DiscountRate() {
         // given
         PercentagePricePolicy percentagePricePolicy = new PercentagePricePolicy(10.0);
         long expected = 10000L;

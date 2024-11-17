@@ -14,7 +14,7 @@ class ConstantPricePolicyTest {
 
     @Test
     @DisplayName("경매 변동폭은 0원보다 작거나 같다면 예외가 발생한다.")
-    void AuctionVariationWidthIsLessThanZero() {
+    void auction_ConstantPricePolicy_DiscountRate_Fail() {
         // expect
         assertThatThrownBy(() -> new ConstantPricePolicy(0))
                 .isInstanceOf(BadRequestException.class)
@@ -23,7 +23,7 @@ class ConstantPricePolicyTest {
 
     @Test
     @DisplayName("할인 폭보다 가격이 더 작거나 같다면 예외가 발생한다.")
-    void discountWidthIsGreaterThanPriceThenException() {
+    void create_ConstantPricePolicy_InvalidDiscountRate() {
         // given
         ConstantPricePolicy constantPricePolicy = new ConstantPricePolicy(100L);
 
@@ -36,7 +36,7 @@ class ConstantPricePolicyTest {
 
     @Test
     @DisplayName("가격과 할인횟수가 주어지면 횟수만큼 할인이 적용된 가격을 계산한다.")
-    void calculatePriceAtVariation() {
+    void calculatePrice_DiscountRate() {
         // given
         ConstantPricePolicy constantPricePolicy = new ConstantPricePolicy(100L);
 

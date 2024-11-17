@@ -30,7 +30,7 @@ class AuctionTest {
 
         @Nested
         @DisplayName("고정 가격 변동 정책을 이용하는 경우")
-        class ConstantPricePolicy_Test {
+        class ConstantPricePolicyTest {
 
             @Test
             @DisplayName("하락하는 가격의 최소값이 0원 이하가 되지 않는 경우 경매가 정상 생성된다")
@@ -95,7 +95,7 @@ class AuctionTest {
 
             @Test
             @DisplayName("경매 진행 중 가격이 0원 이하가 되는 경우 예외가 발생한다")
-            void auctionPriceIsZeroOrLessThanZero() {
+            void auctionPrice_ZeroOrLessThanZero_ExceptionThrown() {
                 // given
                 ConstantPricePolicy pricePolicy = new ConstantPricePolicy(100);
                 LocalDateTime startedAt = LocalDateTime.now();
@@ -132,7 +132,7 @@ class AuctionTest {
                     "300, 30, 5, false",
             })
             @DisplayName("다양한 시나리오에서 가격 검증이 올바르게 동작해야 한다")
-            void validteConstantPricePolicy(
+            void validConstantPricePolicy_Success(
                     long initialPrice, long durationMinutes, long variationMinutes, boolean shouldPass) {
                 // given
                 ConstantPricePolicy pricePolicy = new ConstantPricePolicy(100);
@@ -185,7 +185,7 @@ class AuctionTest {
         }
 
         @Nested
-        class PercentPricePolicy_Test {
+        class PercentPricePolicyTest {
 
             @Test
             @DisplayName("하락하는 가격의 최소값이 0원 이하가 되지 않는 경우 경매가 정상 생성된다")
@@ -217,7 +217,7 @@ class AuctionTest {
 
             @Test
             @DisplayName("경매 진행 중 가격이 0원 이하가 되는 경우 예외가 발생한다")
-            void priceIsZeroOrLessThanZero_ExceptionThrown() {
+            void auctionPrice_ZeroOrLessThanZero_ExceptionThrown() {
                 // given
                 PercentagePricePolicy pricePolicy = new PercentagePricePolicy(50.0);
                 LocalDateTime startedAt = LocalDateTime.now();
@@ -256,7 +256,7 @@ class AuctionTest {
             @ParameterizedTest
             @ValueSource(ints = {11, 7, 13, 21, 31, 14})
             @DisplayName("경매 시간이 나누어 떨어지지 않는 경우 예외가 발생한다")
-            void AuctionTime_IsNotNotValid(int invalidVariationDuration) {
+            void auctionTime_Valid_Fail(int invalidVariationDuration) {
                 // given
                 int originPrice = 10000;
                 int stock = 999999;
@@ -291,10 +291,9 @@ class AuctionTest {
         @Nested
         @DisplayName("경매 주기 시간이 60분을 넘긴다면")
         class AuctionTime_IsOver60Minutes {
-
             @Test
             @DisplayName("예외가 발생한다.")
-            void ThrowsException_Overtime() {
+            void Overtime_ThrowsException() {
                 // given
                 LocalDateTime startedAt = LocalDateTime.now();
                 LocalDateTime finishedAt = startedAt.plusMinutes(60).plusNanos(1L);
@@ -331,7 +330,7 @@ class AuctionTest {
 
             @Test
             @DisplayName("예외가 발생한다.")
-            void throwsException_NotMinute() {
+            void minute_throwsException() {
                 // given
                 LocalDateTime startedAt = LocalDateTime.now();
                 LocalDateTime finishedAt = startedAt.plusMinutes(1).plusNanos(1L);
@@ -502,136 +501,136 @@ class AuctionTest {
                             ErrorCode.A016));
         }
     }
-}
 
-@Nested
-@DisplayName("입찰 메소드는")
-class submit_Method {
+    @Nested
+    @DisplayName("입찰 메소드는")
+    class submit_Method {
 
-    @Test
-    @DisplayName("경매 상태가 진행중이 아니라면 예외가 발생한다.")
-    void submit_NotWaitingAuction() {
-        // given
-        Auction auction = AuctionFixture.createWaitingAuction();
+        @Test
+        @DisplayName("경매 상태가 진행중이 아니라면 예외가 발생한다.")
+        void submit_NotWaitingAuction_ThrowException() {
+            // given
+            Auction auction = AuctionFixture.createWaitingAuction();
 
-        // expect
-        assertThatThrownBy(() -> auction.submit(2000, 10, LocalDateTime.now()))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage("진행 중인 경매에만 입찰할 수 있습니다. 현재상태: " + AuctionStatus.WAITING)
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.A013);
-    }
+            // expect
+            assertThatThrownBy(() -> auction.submit(2000, 10, LocalDateTime.now()))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage("진행 중인 경매에만 입찰할 수 있습니다. 현재상태: " + AuctionStatus.WAITING)
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.A013);
+        }
 
-    @Test
-    @DisplayName("입찰 요청 시간 기준 현재 가격과 사용자가 요청한 가격이 다르다면 예외가 발생한다.")
-    void submit_InvalidTimeAndPrice() {
-        // given
-        LocalDateTime now = LocalDateTime.now();
-        Auction auction = Auction.builder()
-                .sellerId(1L)
-                .productName("productName")
-                .originPrice(10000L)
-                .currentPrice(10000L)
-                .originStock(100L)
-                .currentStock(100L)
-                .maximumPurchaseLimitCount(10L)
-                .pricePolicy(new ConstantPricePolicy(1000L))
-                .variationDuration(Duration.ofMinutes(10L))
-                .startedAt(now.minusMinutes(30))
-                .finishedAt(now.plusMinutes(30))
-                .isShowStock(true)
-                .build();
-        LocalDateTime requestTime = now.minusMinutes(30).plusMinutes(33);
+        @Test
+        @DisplayName("입찰 요청 시간 기준 현재 가격과 사용자가 요청한 가격이 다르다면 예외가 발생한다.")
+        void submit_InvalidTimeAndPrice_ThrowException() {
+            // given
+            LocalDateTime now = LocalDateTime.now();
+            Auction auction = Auction.builder()
+                    .sellerId(1L)
+                    .productName("productName")
+                    .originPrice(10000L)
+                    .currentPrice(10000L)
+                    .originStock(100L)
+                    .currentStock(100L)
+                    .maximumPurchaseLimitCount(10L)
+                    .pricePolicy(new ConstantPricePolicy(1000L))
+                    .variationDuration(Duration.ofMinutes(10L))
+                    .startedAt(now.minusMinutes(30))
+                    .finishedAt(now.plusMinutes(30))
+                    .isShowStock(true)
+                    .build();
+            LocalDateTime requestTime = now.minusMinutes(30).plusMinutes(33);
 
-        // expect
-        assertThatThrownBy(() -> auction.submit(7001L, 10, requestTime))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage(String.format("입력한 가격으로 상품을 구매할 수 없습니다. 현재가격: %d 입력가격: %d", 7000L, 7001L))
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.A022);
-    }
+            // expect
+            assertThatThrownBy(() -> auction.submit(7001L, 10, requestTime))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage(String.format("입력한 가격으로 상품을 구매할 수 없습니다. 현재가격: %d 입력가격: %d", 7000L, 7001L))
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.A022);
+        }
 
-    @ParameterizedTest
-    @ValueSource(longs = {0L, 31L, 101L})
-    @DisplayName("최대 구매 가능 수량보다 큰 구매 요청이 오면 예외가 발생한다.")
-    void submit_InvalidQuantity(long requestQuantity) {
-        // given
-        LocalDateTime now = LocalDateTime.now();
-        Auction auction = Auction.builder()
-                .sellerId(1L)
-                .productName("productName")
-                .originPrice(10000L)
-                .currentPrice(10000L)
-                .originStock(100L)
-                .currentStock(100L)
-                .maximumPurchaseLimitCount(30L)
-                .pricePolicy(new ConstantPricePolicy(1000L))
-                .variationDuration(Duration.ofMinutes(10L))
-                .startedAt(now.minusMinutes(30))
-                .finishedAt(now.plusMinutes(30))
-                .isShowStock(true)
-                .build();
+        @ParameterizedTest
+        @ValueSource(longs = {0L, 31L, 101L})
+        @DisplayName("최대 구매 가능 수량보다 큰 구매 요청이 오면 예외가 발생한다.")
+        void submit_InvalidQuantity_ThrowException(long requestQuantity) {
+            // given
+            LocalDateTime now = LocalDateTime.now();
+            Auction auction = Auction.builder()
+                    .sellerId(1L)
+                    .productName("productName")
+                    .originPrice(10000L)
+                    .currentPrice(10000L)
+                    .originStock(100L)
+                    .currentStock(100L)
+                    .maximumPurchaseLimitCount(30L)
+                    .pricePolicy(new ConstantPricePolicy(1000L))
+                    .variationDuration(Duration.ofMinutes(10L))
+                    .startedAt(now.minusMinutes(30))
+                    .finishedAt(now.plusMinutes(30))
+                    .isShowStock(true)
+                    .build();
 
-        // expect
-        assertThatThrownBy(() -> auction.submit(7000L, requestQuantity, now))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessage(String.format("구매 가능 갯수를 초과하거나 0이하의 갯수만큼 구매할 수 없습니다. 요청: %d, 인당구매제한: %d",
-                        requestQuantity, auction.getMaximumPurchaseLimitCount()))
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.A030);
-    }
+            // expect
+            assertThatThrownBy(() -> auction.submit(7000L, requestQuantity, now))
+                    .isInstanceOf(BadRequestException.class)
+                    .hasMessage(String.format("구매 가능 갯수를 초과하거나 0이하의 갯수만큼 구매할 수 없습니다. 요청: %d, 인당구매제한: %d",
+                            requestQuantity, auction.getMaximumPurchaseLimitCount()))
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.A030);
+        }
 
-    @ParameterizedTest
-    @ValueSource(longs = {11L, 12L, 30L})
-    @DisplayName("현재 재고보다 요청한 수량이 많다면 예외가 발생한다.")
-    void submit_InvalidStock(long requestQuantity) {
-        // given
-        LocalDateTime now = LocalDateTime.now();
-        Auction auction = Auction.builder()
-                .sellerId(1L)
-                .productName("productName")
-                .originPrice(10000L)
-                .currentPrice(10000L)
-                .originStock(100L)
-                .currentStock(10L)
-                .maximumPurchaseLimitCount(30L)
-                .pricePolicy(new ConstantPricePolicy(1000L))
-                .variationDuration(Duration.ofMinutes(10L))
-                .startedAt(now.minusMinutes(30))
-                .finishedAt(now.plusMinutes(30))
-                .isShowStock(true)
-                .build();
+        @ParameterizedTest
+        @ValueSource(longs = {11L, 12L, 30L})
+        @DisplayName("현재 재고보다 요청한 수량이 많다면 예외가 발생한다.")
+        void submit_InvalidStock_ThrowException(long requestQuantity) {
+            // given
+            LocalDateTime now = LocalDateTime.now();
+            Auction auction = Auction.builder()
+                    .sellerId(1L)
+                    .productName("productName")
+                    .originPrice(10000L)
+                    .currentPrice(10000L)
+                    .originStock(100L)
+                    .currentStock(10L)
+                    .maximumPurchaseLimitCount(30L)
+                    .pricePolicy(new ConstantPricePolicy(1000L))
+                    .variationDuration(Duration.ofMinutes(10L))
+                    .startedAt(now.minusMinutes(30))
+                    .finishedAt(now.plusMinutes(30))
+                    .isShowStock(true)
+                    .build();
 
-        // expect
-        assertThatThrownBy(() -> auction.submit(7000L, requestQuantity, now))
-                .isInstanceOf(SuccessfulOperationException.class)
-                .hasMessage(String.format("재고가 부족합니다. 현재 재고: %d, 요청 구매 수량: %d", auction.getCurrentStock(),
-                        requestQuantity))
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.A012);
-    }
+            // expect
+            assertThatThrownBy(() -> auction.submit(7000L, requestQuantity, now))
+                    .isInstanceOf(SuccessfulOperationException.class)
+                    .hasMessage(String.format("재고가 부족합니다. 현재 재고: %d, 요청 구매 수량: %d", auction.getCurrentStock(),
+                            requestQuantity))
+                    .hasFieldOrPropertyWithValue("errorCode", ErrorCode.A012);
+        }
 
-    @Test
-    @DisplayName("정상적인 구매 요청이 들어오면 상품의 현재 재고가 차감된다.")
-    void submit_Success() {
-        // given
-        LocalDateTime now = LocalDateTime.now();
-        Auction auction = Auction.builder()
-                .sellerId(1L)
-                .productName("productName")
-                .originPrice(10000L)
-                .currentPrice(10000L)
-                .originStock(100L)
-                .currentStock(100L)
-                .maximumPurchaseLimitCount(30L)
-                .pricePolicy(new ConstantPricePolicy(1000L))
-                .variationDuration(Duration.ofMinutes(10L))
-                .startedAt(now.minusMinutes(30))
-                .finishedAt(now.plusMinutes(30))
-                .isShowStock(true)
-                .build();
-        LocalDateTime requestTime = now.minusMinutes(30).plusMinutes(33);
+        @Test
+        @DisplayName("정상적인 구매 요청이 들어오면 상품의 현재 재고가 차감된다.")
+        void submit_Success() {
+            // given
+            LocalDateTime now = LocalDateTime.now();
+            Auction auction = Auction.builder()
+                    .sellerId(1L)
+                    .productName("productName")
+                    .originPrice(10000L)
+                    .currentPrice(10000L)
+                    .originStock(100L)
+                    .currentStock(100L)
+                    .maximumPurchaseLimitCount(30L)
+                    .pricePolicy(new ConstantPricePolicy(1000L))
+                    .variationDuration(Duration.ofMinutes(10L))
+                    .startedAt(now.minusMinutes(30))
+                    .finishedAt(now.plusMinutes(30))
+                    .isShowStock(true)
+                    .build();
+            LocalDateTime requestTime = now.minusMinutes(30).plusMinutes(33);
 
-        // when
-        auction.submit(7000L, 10, requestTime);
+            // when
+            auction.submit(7000L, 10, requestTime);
 
-        // then
-        assertThat(auction.getCurrentStock()).isEqualTo(90L);
+            // then
+            assertThat(auction.getCurrentStock()).isEqualTo(90L);
+        }
     }
 }
