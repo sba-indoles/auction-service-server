@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.Login;
-import org.indoles.autionserviceserver.core.auction.controller.interfaces.SellerOnly;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.Seller;
 import org.indoles.autionserviceserver.core.auction.dto.Request.CancelAuctionRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Request.CreateAuctionRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Request.SellerAuctionSearchConditionRequest;
@@ -30,7 +30,7 @@ public class SellerAuctionController {
      * 경매 등록 API(판매자 전용)
      */
 
-    @SellerOnly
+    @Seller
     @PostMapping
     public ResponseEntity<Void> createAuction(
             @Login SignInfoRequest signInfoRequest,
@@ -58,7 +58,7 @@ public class SellerAuctionController {
     /**
      * 경매 취소 API(판매자 전용)
      */
-    @SellerOnly
+    @Seller
     @DeleteMapping("/{auctionId}")
     public void cancelAuction(
             @Login SignInfoRequest signInfoRequest,
@@ -72,7 +72,7 @@ public class SellerAuctionController {
     /**
      * 경매 조회 API(판매자 전용)
      */
-    @SellerOnly
+    @Seller
     @GetMapping("/seller")
     public ResponseEntity<List<SellerAuctionSimpleInfoResponse>> getSellerAuctions(
             @Login SignInfoRequest signInfoRequest,
@@ -89,7 +89,7 @@ public class SellerAuctionController {
      * 경매 상세 조회 API(판매자 전용)
      */
 
-    @SellerOnly
+    @Seller
     @GetMapping("/{auctionId}/seller")
     public ResponseEntity<SellerAuctionInfoResponse> getSellerAuction(
             @Login SignInfoRequest signInfoRequest,

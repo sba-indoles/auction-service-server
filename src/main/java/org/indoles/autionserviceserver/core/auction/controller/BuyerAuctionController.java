@@ -3,7 +3,7 @@ package org.indoles.autionserviceserver.core.auction.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
-import org.indoles.autionserviceserver.core.auction.controller.interfaces.BuyerOnly;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.Buyer;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.Login;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.PublicAccess;
 import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchConditionRequest;
@@ -30,7 +30,7 @@ public class BuyerAuctionController {
     private final BuyerService buyerService;
 
     /**
-     * 경매 목록 조회 API - 모든 사람 조회
+     * 경매 목록 조회 API - 모든 사용자 조회
      */
 
     @PublicAccess
@@ -45,12 +45,12 @@ public class BuyerAuctionController {
     }
 
     /**
-     * 경매 목록 상세 조회 API - 모든 사람 조회
+     * 경매 물품 상세 조회 API - 모든 사용자 조회
      */
+
     @PublicAccess
     @GetMapping("/{auctionId}")
     public ResponseEntity<BuyerAuctionInfoResponse> getAuction(
-            @Login SignInfoRequest signInfoRequest,
             @PathVariable("auctionId") Long auctionId) {
 
         BuyerAuctionInfoResponse result = buyerService.getBuyerAuction(auctionId);
@@ -60,7 +60,7 @@ public class BuyerAuctionController {
     /**
      * 경매 입찰 API(구매자 전용)
      */
-    @BuyerOnly
+    @Buyer
     @PostMapping("/{auctionId}/purchase")
     public ResponseEntity<PurchaseResponse> submitAuction(
             @Login SignInfoRequest signInfoRequest,
@@ -85,7 +85,7 @@ public class BuyerAuctionController {
     /**
      * 경매 입찰 취소 API(구매자 전용)
      */
-    @BuyerOnly
+    @Buyer
     @DeleteMapping("/{auctionId}/refund")
     public void cancelAuction(
             @Login SignInfoRequest signInfoRequest,

@@ -3,9 +3,9 @@ package org.indoles.autionserviceserver.global.config;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.indoles.autionserviceserver.core.auction.controller.interfaces.BuyerOnly;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.Buyer;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.PublicAccess;
-import org.indoles.autionserviceserver.core.auction.controller.interfaces.SellerOnly;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.Seller;
 import org.indoles.autionserviceserver.core.auction.domain.enums.Role;
 import org.indoles.autionserviceserver.core.auction.dto.Request.SignInfoRequest;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
@@ -29,6 +29,13 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
         if (handler instanceof ResourceHttpRequestHandler || CorsUtils.isPreFlightRequest(request)) {
             return true;
+        }
+
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            if (handlerMethod.hasMethodAnnotation(PublicAccess.class)) {
+                return true;
+            }
         }
 
         String token = extractToken(request);
@@ -56,15 +63,11 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
     private void authorize(Object handler, SignInfoRequest signInfoRequest) {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-        if (handlerMethod.hasMethodAnnotation(PublicAccess.class)) {
-            return;
-        }
-
-        if (handlerMethod.hasMethodAnnotation(BuyerOnly.class) && !signInfoRequest.isType(Role.BUYER)) {
+        if (handlerMethod.hasMethodAnnotation(Buyer.class) && !signInfoRequest.isType(Role.BUYER)) {
             throw new AuthorizationException("구매자만 요청할 수 있는 경로(API) 입니다.", ErrorCode.AU02);
         }
 
-        if (handlerMethod.hasMethodAnnotation(SellerOnly.class) && !signInfoRequest.isType(Role.SELLER)) {
+        if (handlerMethod.hasMethodAnnotation(Seller.class) && !signInfoRequest.isType(Role.SELLER)) {
             throw new AuthorizationException("판매자만 요청할 수 있는 경로(API) 입니다.", ErrorCode.AU01);
         }
     }
