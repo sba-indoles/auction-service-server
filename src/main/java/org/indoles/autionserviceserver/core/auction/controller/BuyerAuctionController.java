@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.controller.currentTime.CurrentTime;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.BuyerOnly;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.Login;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.PublicAccess;
 import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchConditionRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Request.PurchaseRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionInfoResponse;
@@ -29,9 +30,10 @@ public class BuyerAuctionController {
     private final BuyerService buyerService;
 
     /**
-     * 경매 목록 조회 API
+     * 경매 목록 조회 API - 모든 사람 조회
      */
 
+    @PublicAccess
     @GetMapping("/search")
     public ResponseEntity<List<BuyerAuctionSimpleInfoResponse>> getAuctions(
             @RequestParam(name = "offset") int offset,
@@ -43,9 +45,9 @@ public class BuyerAuctionController {
     }
 
     /**
-     * 경매 목록 상세 조회 API(구매자 전용)
+     * 경매 목록 상세 조회 API - 모든 사람 조회
      */
-    @BuyerOnly
+    @PublicAccess
     @GetMapping("/{auctionId}")
     public ResponseEntity<BuyerAuctionInfoResponse> getAuction(
             @Login SignInfoRequest signInfoRequest,
