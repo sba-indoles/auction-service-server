@@ -3,17 +3,12 @@ package org.indoles.autionserviceserver.core.auction.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
-import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchConditionRequest;
-import org.indoles.autionserviceserver.core.auction.dto.Request.RefundRequest;
-import org.indoles.autionserviceserver.core.auction.dto.Request.TransferPointRequest;
+import org.indoles.autionserviceserver.core.auction.dto.Request.*;
 import org.indoles.autionserviceserver.core.auction.dto.Response.*;
-import org.indoles.autionserviceserver.core.auction.dto.Response.SignInInfoResponse;
 import org.indoles.autionserviceserver.core.auction.infra.AuctionCoreRepository;
 import org.indoles.autionserviceserver.core.auction.utils.MemberFeignClient;
-import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
 import org.indoles.autionserviceserver.global.exception.NotFoundException;
-import org.indoles.autionserviceserver.global.util.JwtTokenProvider;
 import org.indoles.autionserviceserver.global.util.Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +24,6 @@ public class BuyerService {
 
     private final AuctionCoreRepository auctionCoreRepository;
     private final MemberFeignClient memberFeignClient;
-    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 경매 상품에 대한 입찰(구매)을 진행하는 서비스 로직
@@ -41,16 +35,15 @@ public class BuyerService {
      */
 
     @Transactional
-    public void submitPurchase(long auctionId, long price, long quantity, LocalDateTime requestTime, String authorizationHeader) {
+    public void submitPurchase(long auctionId, long price, long quantity, LocalDateTime requestTime, SignInfoRequest signInfoRequest) {
         Auction auction = findAuctionObject(auctionId);
         auction.submit(price, quantity, requestTime);
         auctionCoreRepository.save(auction);
 
-        Long userId = getUserIdFromToken(authorizationHeader);
-
+        Long userId = signInfoRequest.id();
 
         TransferPointRequest transferPointRequest = new TransferPointRequest(userId, price);
-        TransferPointResponse transferResponse = memberFeignClient.transferPoint(authorizationHeader, transferPointRequest);
+        TransferPointResponse transferResponse = memberFeignClient.transferPoint(transferPointRequest);
         log.info("포인트 전송 응답: {}", transferResponse);
     }
 
@@ -60,15 +53,6 @@ public class BuyerService {
                         () -> new NotFoundException("경매(Auction)를 찾을 수 없습니다. AuctionId: " + auctionId, ErrorCode.A010));
     }
 
-    private Long getUserIdFromToken(String authorizationHeader) {
-        String token = authorizationHeader.substring(7); // "Bearer "를 제거
-        if (jwtTokenProvider.validateToken(token)) {
-            SignInInfoResponse signInInfoResponse = jwtTokenProvider.getSignInInfoFromToken(token);
-            return signInInfoResponse.id();
-        } else {
-            throw new AuthorizationException("Unauthorized: JWT validation failed", ErrorCode.AU00);
-        }
-    }
 
     /**
      * 경매 상품에 대한 입찰(구매)을 취소하는 서비스 로직
@@ -78,15 +62,15 @@ public class BuyerService {
      */
 
     @Transactional
-    public void cancelPurchase(long auctionId, long quantity, String authorizationHeader) {
+    public void cancelPurchase(long auctionId, long quantity, SignInfoRequest signInfoRequest) {
         Auction auction = findAuctionObjectForUpdate(auctionId);
         auction.refundStock(quantity);
         auctionCoreRepository.save(auction);
 
-        Long userId = getUserIdFromToken(authorizationHeader);
+        Long userId = signInfoRequest.id();
 
         RefundRequest refundRequest = new RefundRequest(userId, quantity);
-        RefundResponse refundResponse = memberFeignClient.refundPoint(authorizationHeader, refundRequest);
+        RefundResponse refundResponse = memberFeignClient.refundPoint(refundRequest);
         log.info("포인트 환불 응답: {}", refundResponse);
     }
 

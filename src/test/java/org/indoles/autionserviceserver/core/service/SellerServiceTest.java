@@ -5,7 +5,7 @@ import org.indoles.autionserviceserver.core.auction.domain.ConstantPricePolicy;
 import org.indoles.autionserviceserver.core.auction.domain.PricePolicy;
 import org.indoles.autionserviceserver.core.auction.domain.enums.Role;
 import org.indoles.autionserviceserver.core.auction.dto.Request.CreateAuctionRequest;
-import org.indoles.autionserviceserver.core.auction.dto.Response.SignInInfoResponse;
+import org.indoles.autionserviceserver.core.auction.dto.Request.SignInfoRequest;
 import org.indoles.autionserviceserver.core.context.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -44,7 +44,7 @@ public class SellerServiceTest extends ServiceTest {
                 LocalDateTime startedAt = now.plusHours(1);
                 LocalDateTime finishedAt = startedAt.plusHours(1);
 
-                SignInInfoResponse sellerInfo = new SignInInfoResponse(sellerId, Role.SELLER);
+                SignInfoRequest sellerInfo = new SignInfoRequest(sellerId, Role.SELLER);
                 CreateAuctionRequest command = new CreateAuctionRequest(productName, originPrice, stock,
                         maximumPurchaseLimitCount, pricePolicy, varitationDuration, now, startedAt,
                         finishedAt,
@@ -93,7 +93,7 @@ public class SellerServiceTest extends ServiceTest {
             LocalDateTime startedAt = now.plusHours(1);
             LocalDateTime finishedAt = startedAt.plusMinutes(durationTime);
 
-            SignInInfoResponse sellerInfo = new SignInInfoResponse(sellerId, Role.SELLER);
+            SignInfoRequest sellerInfo = new SignInfoRequest(sellerId, Role.SELLER);
             CreateAuctionRequest command = new CreateAuctionRequest(
                     productName, originPrice, stock, maximumPurchaseLimitCount, pricePolicy,
                     varitationDuration, now, startedAt, finishedAt, true

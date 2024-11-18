@@ -1,4 +1,4 @@
-package org.indoles.autionserviceserver.core.auction.dto.Response;
+package org.indoles.autionserviceserver.core.auction.dto.Request;
 
 import org.indoles.autionserviceserver.core.auction.domain.enums.Role;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
@@ -10,10 +10,10 @@ import java.util.Objects;
  * 경매 서버에서 필요한 회원 서버의 내용을 가져오는 DTO
  */
 
-public record SignInInfoResponse(Long id, Role role) {
+public record SignInfoRequest(Long id, Role role) {
     private static final String ERROR_NULL_VALUE = "%s는 Null일 수 없습니다.";
 
-    public SignInInfoResponse {
+    public SignInfoRequest {
         validateNotNull(id, "로그인한 사용자의 식별자");
         validateNotNull(role, "로그인한 사용자의 역할");
     }
