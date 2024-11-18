@@ -39,16 +39,6 @@ public class JwtTokenProvider {
         try {
             Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token);
             return true;
-        } catch (SignatureException e) {
-            log.error("JWT signature verification failed: {}", e.getMessage());
-        } catch (ExpiredJwtException e) {
-            log.error("JWT token is expired: {}", e.getMessage());
-        } catch (MalformedJwtException e) {
-            log.error("JWT token is malformed: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            log.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.error("JWT token is empty: {}", e.getMessage());
         } catch (Exception e) {
             log.error("JWT validation error: {}", e.getMessage());
         }

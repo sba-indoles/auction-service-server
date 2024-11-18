@@ -16,4 +16,3 @@ public class AuthenticationContext {
         this.principal = principal;
     }
 }
-
