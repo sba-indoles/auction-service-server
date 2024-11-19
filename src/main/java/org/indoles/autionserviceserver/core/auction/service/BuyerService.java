@@ -49,6 +49,8 @@ public class BuyerService {
         long sellerId = auction.getSellerId();
         long totalAmount = message.price() * message.quantity();
 
+        auctionCoreRepository.save(auction);
+
         TransferPointRequest transferRequest = new TransferPointRequest(sellerId, totalAmount);
 
         String token = jwtTokenProvider.createAccessToken(buyerInfo);
@@ -96,9 +98,15 @@ public class BuyerService {
 
         cacelAuction(receiptInfoResponse.auctionId(), receiptInfoResponse.quantity());
 
-        //포인트 환불 - 회원 서버 - Post
+        RefundRequest refundRequest = RefundRequest.builder()
+                .receiverId(receiptInfoResponse.sellerId())
+                .amount(receiptInfoResponse.price() * receiptInfoResponse.quantity())
+                .build();
 
-        //환불된 영수증 저장 - 영수증 서버 - Post
+        RefundResponse refundResponse = memberFeignClient.refundPoint("Bearer " + token, refundRequest);
+        log.debug("포인트 환불 완료: {}", refundResponse);
+
+        receiptFeignClient.refundReceipt("Bearer " + token, message.receiptId());
     }
 
     public void cacelAuction(long auctionId, long quantity) {

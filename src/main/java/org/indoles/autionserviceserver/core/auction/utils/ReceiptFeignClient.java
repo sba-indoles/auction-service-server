@@ -23,4 +23,10 @@ public interface ReceiptFeignClient {
             @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable("receiptId") UUID receiptId
     );
+
+    @PutMapping("/receipts/refund/{receiptId}")
+    void refundReceipt(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable("receiptId") UUID receiptId
+    );
 }
