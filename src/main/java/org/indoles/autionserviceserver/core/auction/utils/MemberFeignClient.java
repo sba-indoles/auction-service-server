@@ -1,8 +1,6 @@
 package org.indoles.autionserviceserver.core.auction.utils;
 
-import org.indoles.autionserviceserver.core.auction.controller.interfaces.Login;
 import org.indoles.autionserviceserver.core.auction.dto.Request.RefundRequest;
-import org.indoles.autionserviceserver.core.auction.dto.Request.SignInfoRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Request.TransferPointRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Response.RefundResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.TransferPointResponse;

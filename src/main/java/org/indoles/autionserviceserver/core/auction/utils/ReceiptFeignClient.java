@@ -18,10 +18,9 @@ public interface ReceiptFeignClient {
             @RequestBody CreateReceiptRequest request
     );
 
-
-    @GetMapping("/receipts/find/{userId}")
-    List<TransactionInfoResponse> getReceiptsByUserId(@PathVariable("userId") UUID userId);
-
     @GetMapping("/receipts/find/{receiptId}")
-    ReceiptInfoResponse getReceiptById(@PathVariable("receiptId") UUID receiptId);
+    ReceiptInfoResponse getReceiptById(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @PathVariable("receiptId") UUID receiptId
+    );
 }

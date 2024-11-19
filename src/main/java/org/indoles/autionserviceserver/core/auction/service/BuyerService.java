@@ -11,7 +11,6 @@ import org.indoles.autionserviceserver.core.auction.infra.AuctionCoreRepository;
 import org.indoles.autionserviceserver.core.auction.utils.MemberFeignClient;
 import org.indoles.autionserviceserver.core.auction.utils.ReceiptFeignClient;
 import org.indoles.autionserviceserver.global.dto.AuctionPurchaseRequestMessage;
-import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
 import org.indoles.autionserviceserver.global.exception.NotFoundException;
@@ -26,7 +25,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class BuyerService {
 
@@ -87,27 +86,27 @@ public class BuyerService {
 
     @Transactional
     public void cancelPurchase(AuctionRefundRequestMessage message) {
-        verifyHasBuyerRole(message.buyerInfo());
 
-        //거래 내역 서버 조회(호출 - 업데이트) - 거래 내역 서버
-        /**
-         *         Receipt receipt = findRefundTargetReceiptForUpdate(message.receiptId());
-         *         verifySameBuyer(message.buyerInfo(), receipt.getBuyerId());
-         *         receipt.markAsRefund();
-         */
+        String token = jwtTokenProvider.createAccessToken(message.buyerInfo());
 
-        //Auction auction = this.getAuctionForUpdate(receipt.getAuctionId());
-        //verifyEndAuction(message.requestTime(), auction.finishedAt());
+        ReceiptInfoResponse receiptInfoResponse = receiptFeignClient.getReceiptById("Bearer " + token, message.receiptId());
 
-        //auctionService.cancelPurchase(receipt.getAuctionId(), receipt.getQuantity());
+        AuctionInfoRequest auction = this.getAuctionForUpdate(receiptInfoResponse.auctionId());
+        verifyEndAuction(message.requestTime(), auction.finishedAt());
 
-        //포인트 환불 - 회원 서버
-        //paymentService.pointTransfer(receipt.getSellerId(), receipt.getBuyerId(), receipt.getPrice() * receipt.getQuantity());
+        cacelAuction(receiptInfoResponse.auctionId(), receiptInfoResponse.quantity());
 
-        //거래 내역 서버 업데이트 - 거래 내역 서버
-        //receiptRepository.save(receipt);
+        //포인트 환불 - 회원 서버 - Post
 
+        //환불된 영수증 저장 - 영수증 서버 - Post
     }
+
+    public void cacelAuction(long auctionId, long quantity) {
+        Auction auction = findAuctionObjectForUpdate(auctionId);
+        auction.refundStock(quantity);
+        auctionCoreRepository.save(auction);
+    }
+
 
     /**
      * 경매 목록을 조회하는 서비스 로직(판매자용)
@@ -142,23 +141,12 @@ public class BuyerService {
         }
     }
 
-    private void verifyHasBuyerRole(SignInfoRequest buyerInfo) {
-        if (!buyerInfo.isType(Role.BUYER)) {
-            throw new AuthorizationException("구매자만 환불을 할 수 있습니다.", ErrorCode.P000);
-        }
-    }
-
     private void verifyEndAuction(LocalDateTime requestTime, LocalDateTime auctionFinishedAt) {
         if (requestTime.isBefore(auctionFinishedAt)) {
             throw new BadRequestException("종료된 경매만 환불할 수 있습니다.", ErrorCode.P007);
         }
     }
 
-    private void verifySameBuyer(SignInfoRequest buyerInfo, long receiptBuyerId) {
-        if (buyerInfo.id() != receiptBuyerId) {
-            throw new AuthorizationException("환불할 입찰 내역의 구매자만 환불을 할 수 있습니다.", ErrorCode.P004);
-        }
-    }
 
     public AuctionInfoRequest getAuctionForUpdate(long auctionId) {
         Auction auction = findAuctionObjectForUpdate(auctionId);
