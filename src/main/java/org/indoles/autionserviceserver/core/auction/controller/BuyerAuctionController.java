@@ -6,12 +6,10 @@ import org.indoles.autionserviceserver.core.auction.controller.currentTime.Curre
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.Buyer;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.Login;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.PublicAccess;
-import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionSearchConditionRequest;
-import org.indoles.autionserviceserver.core.auction.dto.Request.PurchaseRequest;
+import org.indoles.autionserviceserver.core.auction.dto.Request.*;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionSimpleInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.PurchaseResponse;
-import org.indoles.autionserviceserver.core.auction.dto.Request.SignInfoRequest;
 import org.indoles.autionserviceserver.core.auction.service.BuyerService;
 import org.indoles.autionserviceserver.global.dto.AuctionPurchaseRequestMessage;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +62,7 @@ public class BuyerAuctionController {
     @PostMapping("/{auctionId}/purchase")
     public ResponseEntity<PurchaseResponse> submitAuction(
             @Login SignInfoRequest signInfoRequest,
-            @CurrentTime LocalDateTime localDateTime,
+            @CurrentTime LocalDateTime now,
             @PathVariable(name = "auctionId") Long auctionId,
             @RequestBody PurchaseRequest purchaseRequest) {
 
@@ -74,10 +72,11 @@ public class BuyerAuctionController {
                 .auctionId(auctionId)
                 .price(purchaseRequest.price())
                 .quantity(purchaseRequest.quantity())
-                .requestTime(localDateTime)
+                .requestTime(now)
                 .build();
 
-        buyerService.submitPurchase(auctionId, purchaseRequest.price(), purchaseRequest.quantity(), localDateTime, signInfoRequest);
+        buyerService.submitPurchase(requestMessage, signInfoRequest);
+
         PurchaseResponse response = new PurchaseResponse(requestMessage.requestId());
         return ResponseEntity.ok(response);
     }
@@ -87,12 +86,14 @@ public class BuyerAuctionController {
      */
     @Buyer
     @DeleteMapping("/{auctionId}/refund")
-    public void cancelAuction(
+    public ResponseEntity<Void> cancelAuction(
             @Login SignInfoRequest signInfoRequest,
-            @PathVariable("auctionId") Long auctionId,
-            @RequestParam("quantity") Long quantity) {
+            @PathVariable("auctionId") UUID auctionId,
+            @CurrentTime LocalDateTime localDateTime) {
 
-        buyerService.cancelPurchase(auctionId, quantity, signInfoRequest);
+        var message = new AuctionRefundRequestMessage(signInfoRequest, auctionId, localDateTime);
+        buyerService.cancelPurchase(message);
+        return ResponseEntity.ok().build();
     }
 }
 
