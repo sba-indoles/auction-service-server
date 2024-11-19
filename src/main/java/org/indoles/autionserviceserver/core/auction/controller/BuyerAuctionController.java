@@ -6,6 +6,8 @@ import org.indoles.autionserviceserver.core.auction.controller.currentTime.Curre
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.Buyer;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.Login;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.PublicAccess;
+import org.indoles.autionserviceserver.core.auction.controller.interfaces.Roles;
+import org.indoles.autionserviceserver.core.auction.domain.enums.Role;
 import org.indoles.autionserviceserver.core.auction.dto.Request.*;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionSimpleInfoResponse;
@@ -49,7 +51,7 @@ public class BuyerAuctionController {
     @PublicAccess
     @GetMapping("/{auctionId}")
     public ResponseEntity<BuyerAuctionInfoResponse> getAuction(
-            @PathVariable("auctionId") Long auctionId) {
+            @PathVariable(name = "auctionId") Long auctionId) {
 
         BuyerAuctionInfoResponse result = buyerService.getBuyerAuction(auctionId);
         return ResponseEntity.ok(result);
@@ -85,13 +87,13 @@ public class BuyerAuctionController {
      * 경매 입찰 취소 API(구매자 전용)
      */
     @Buyer
-    @DeleteMapping("/{auctionId}/refund")
+    @DeleteMapping("/{receiptId}/refund")
     public ResponseEntity<Void> cancelAuction(
             @Login SignInfoRequest signInfoRequest,
-            @PathVariable("auctionId") UUID auctionId,
+            @PathVariable(name = "receiptId") UUID receiptId,
             @CurrentTime LocalDateTime localDateTime) {
 
-        var message = new AuctionRefundRequestMessage(signInfoRequest, auctionId, localDateTime);
+        var message = new AuctionRefundRequestMessage(signInfoRequest, receiptId, localDateTime);
         buyerService.cancelPurchase(message);
         return ResponseEntity.ok().build();
     }

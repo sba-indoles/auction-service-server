@@ -18,6 +18,9 @@ public interface MemberFeignClient {
             @RequestBody TransferPointRequest transferPointRequest);
 
     @PostMapping("/members/points/refund")
-    RefundResponse refundPoint(@RequestBody RefundRequest refundRequest);
+    RefundResponse refundPoint(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestBody RefundRequest refundRequest
+    );
 }
 

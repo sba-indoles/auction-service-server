@@ -3,6 +3,7 @@ package org.indoles.autionserviceserver.core.auction.domain;
 import lombok.Builder;
 import lombok.Getter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.domain.enums.AuctionStatus;
 import org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 
 import static org.indoles.autionserviceserver.core.auction.domain.validate.ValidateAuction.*;
 
-
+@Slf4j
 @Getter
 public class Auction {
 
@@ -117,6 +118,8 @@ public class Auction {
         verifyPurchaseQuantity(quantity);
 
         this.currentStock -= quantity;
+        this.currentPrice = price;
+        log.debug("Updated current price to: {}", this.currentPrice);
     }
 
     private void verifyCurrentPrice(long inputPrice, LocalDateTime requestTime) {
@@ -125,6 +128,7 @@ public class Auction {
         long actualPrice = pricePolicy.calculatePriceAtVariation(originPrice, currentVariationCount);
 
         validateBuyPrice(actualPrice, inputPrice);
+        this.currentPrice = inputPrice;
     }
 
     private void verifyPurchaseQuantity(long quantity) {

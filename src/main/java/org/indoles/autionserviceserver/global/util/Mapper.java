@@ -2,6 +2,7 @@ package org.indoles.autionserviceserver.global.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.dto.Request.AuctionInfoRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionInfoResponse;
@@ -10,6 +11,7 @@ import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionIn
 import org.indoles.autionserviceserver.core.auction.dto.Response.SellerAuctionSimpleInfoResponse;
 import org.indoles.autionserviceserver.core.auction.entity.AuctionEntity;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Mapper {
     public static AuctionInfoRequest convertToAuctionInfo(Auction auction) {
@@ -103,6 +105,7 @@ public class Mapper {
     }
 
     public static BuyerAuctionSimpleInfoResponse convertToBuyerAuctionSimpleInfo(Auction auction) {
+        log.debug("Converting auction: {} with current price: {}", auction.getId(), auction.getCurrentPrice());
         return new BuyerAuctionSimpleInfoResponse(
                 auction.getId(),
                 auction.getProductName(),
