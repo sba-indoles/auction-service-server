@@ -1,10 +1,12 @@
 package org.indoles.autionserviceserver.core.auction.dto.validateDto;
 
+import org.indoles.autionserviceserver.core.auction.domain.enums.ReceiptStatus;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ValidateAuctionDto {
 
@@ -109,6 +111,7 @@ public class ValidateAuctionDto {
 
     /**
      * 입찰 DTO에서 사용되는 유효성 검사
+     *
      * @param price
      */
 
@@ -123,6 +126,7 @@ public class ValidateAuctionDto {
             throw new BadRequestException("경매 입찰 요청 수량은 0보다 커야합니다. 요청수량: " + quantity, ErrorCode.A027);
         }
     }
+
     /**
      * 경매 DTO에서 공통적으로 사용되는 유효성 검사
      *
@@ -148,15 +152,45 @@ public class ValidateAuctionDto {
      * 경매 입찰 시 사용되는 DTO의 유효성 검사
      */
 
-    public static void validateReceiverId(Long receiverId) {
-        if (receiverId == null || receiverId <= 0) {
-            throw new BadRequestException("수신할 판매자의 ID를 찾을 수 없습니다.", ErrorCode.P0010);
-        }
-    }
-
     public static void validateAmount(Long amount) {
         if (amount == null || amount <= 0) {
             throw new BadRequestException("포인트 전송 금액은 null이거나 0보다 작을 수 없습니다.", ErrorCode.P009);
         }
+    }
+
+    public static void validateReceiverId(Long receiverId) {
+        if (receiverId == null || receiverId <= 0) {
+            throw new BadRequestException("수신할 판매자의 ID를 찾을 수 없습니다.", ErrorCode.P010);
+        }
+    }
+
+    /**
+     * 경매 입찰 시 거래 내역 서버에 전송할 DTO의 유효성 검사
+     */
+
+    public static void validateAuctionId(long auctionId) {
+        if (auctionId <= 0) {
+            throw new BadRequestException("경매 ID를 찾을 수 없습니다.", ErrorCode.A032);
+        }
+    }
+
+    public static void validateBuyerId(long buyerId) {
+        if (buyerId <= 0) {
+            throw new BadRequestException("구매자 ID를 찾을 수 없습니다.", ErrorCode.A033);
+        }
+    }
+
+    public static void validateSellerId(long sellerId) {
+        if (sellerId <= 0) {
+            throw new BadRequestException("판매자 ID를 찾을 수 없습니다.", ErrorCode.A034);
+        }
+    }
+
+    public static void validateReceiptStatus(ReceiptStatus receiptStatus) {
+        validateNotNull(receiptStatus, "거래 내역 상태");
+    }
+
+    public static void validateReceiptId(UUID receiptId) {
+        validateNotNull(receiptId, "거래 내역 ID");
     }
 }
