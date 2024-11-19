@@ -3,11 +3,13 @@ package org.indoles.autionserviceserver.core.auction.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
+import org.indoles.autionserviceserver.core.auction.domain.enums.ReceiptStatus;
 import org.indoles.autionserviceserver.core.auction.domain.enums.Role;
 import org.indoles.autionserviceserver.core.auction.dto.Request.*;
 import org.indoles.autionserviceserver.core.auction.dto.Response.*;
 import org.indoles.autionserviceserver.core.auction.infra.AuctionCoreRepository;
 import org.indoles.autionserviceserver.core.auction.utils.MemberFeignClient;
+import org.indoles.autionserviceserver.core.auction.utils.ReceiptFeignClient;
 import org.indoles.autionserviceserver.global.dto.AuctionPurchaseRequestMessage;
 import org.indoles.autionserviceserver.global.exception.AuthorizationException;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -30,6 +33,7 @@ public class BuyerService {
     private final AuctionCoreRepository auctionCoreRepository;
     private final MemberFeignClient memberFeignClient;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ReceiptFeignClient receiptFeignClient;
 
     /**
      * 경매 상품에 대한 입찰(구매)을 진행하는 서비스 로직
@@ -57,7 +61,18 @@ public class BuyerService {
             throw new RuntimeException("포인트 전송 실패. 판매자 ID: " + sellerId + ", 구매자 ID: " + buyerId);
         }
 
-        //거래 내역 서버 기록 - 거래 내역 서버
+        CreateReceiptRequest createReceiptRequest = CreateReceiptRequest.builder()
+                .receiptId(UUID.randomUUID())
+                .productName(auction.getProductName())
+                .price(message.price())
+                .quantity(message.quantity())
+                .receiptStatus(ReceiptStatus.PURCHASED)
+                .sellerId(sellerId)
+                .buyerId(buyerId)
+                .auctionId(message.auctionId())
+                .build();
+
+        receiptFeignClient.createReceipt("Bearer " + token, createReceiptRequest);
     }
 
     private Auction findAuctionObject(long auctionId) {
