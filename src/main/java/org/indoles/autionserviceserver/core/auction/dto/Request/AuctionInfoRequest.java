@@ -57,14 +57,4 @@ public record AuctionInfoRequest(
         validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
         validateVariationDuration(variationDuration);
     }
-
-
-    public void validate() {
-        validateProductName(productName);
-        validateOriginPrice(originPrice);
-        validateCurrentPrice(currentPrice);
-        validateStock(stock);
-        validateMaximumPurchaseLimitCount(maximumPurchaseLimitCount);
-        validateVariationDuration(variationDuration);
-    }
 }
