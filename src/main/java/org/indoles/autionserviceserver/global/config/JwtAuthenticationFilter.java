@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.dto.Request.SignInfoRequest;
 import org.indoles.autionserviceserver.global.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Value("${jwt.secret}")
@@ -38,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(signInfoRequest, null, new ArrayList<>());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
+        log.error("Invalid or missing JWT token");
         filterChain.doFilter(request, response);
     }
 
