@@ -17,6 +17,16 @@ pipeline {
             }
         }
 
+        stage('Modify application.yml') {
+            steps {
+                script {
+                    sh '''
+                    echo "aws:\n  paramstore:\n    enabled: true\n    prefix: /auction" > src/main/resources/application.yml
+                    '''
+                }
+            }
+        }
+
         stage('Build JAR File') {
             steps {
                 sh './gradlew build -x test'
