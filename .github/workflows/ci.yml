@@ -2,7 +2,7 @@ name: ci
 
 on:
   pull_request:
-    branches: [ "dev" ,"prod"]
+    branches: [ "dev", "prod" ]
 
 jobs:
   build:
@@ -48,5 +48,9 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }} 
           JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }} 
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}  
+          MEMBER_SERVICE_URL: ${{ secrets.MEMBER_SERVICE_URL }}  
+          RECEIPT_SERVICE_URL: ${{ secrets.RECEIPT_SERVICE_URL }} 
         run: |
-          ./gradlew build sonar --info -Djwt.secret=$JWT_SECRET -Djwt.expiration=$JWT_EXPIRATION
+          ./gradlew build sonar --info -Djwt.secret=$JWT_SECRET -Djwt.expiration=$JWT_EXPIRATION \
+          -Dmember.service.url=$MEMBER_SERVICE_URL \
+          -Dreceipt.service.url=$RECEIPT_SERVICE_URL
