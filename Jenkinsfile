@@ -52,6 +52,13 @@ jwt:
   header: Authorization
   prefix: Bearer
   type: JWT
+
+member-service:
+  url: ${MEMBER-URL}
+auction-service:
+  url: ${AUCTION-URL}
+receipt-service:
+  url: ${RECEIPT-URL}
 '''
                 }
             }
