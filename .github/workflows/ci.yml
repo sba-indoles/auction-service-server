@@ -48,9 +48,13 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }} 
           JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }} 
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}  
-          feign.client.config.member-service.url: ${{ secrets.MEMBER_SERVICE_URL }}  
-          feign.client.config.receipt-service.url: ${{ secrets.RECEIPT_SERVICE_URL }}
+          feign.client.config.member-service.url: ${{ secrets.feign.client.config.member-service.url }}
+          feign.client.config.receipt-service.url: ${{ secrets.feign.client.config.receipt-service.url }} 
         run: |
+          ./gradlew build sonar --info -Djwt.secret=$JWT_SECRET -Djwt.expiration=$JWT_EXPIRATION \
+          -Dfeign.client.config.member-service.url=${{ secrets.feign.client.config.member-service.url }} \
+          -Dfeign.client.config.receipt-service.url=${{ secrets.feign.client.config.receipt-service.url }}
+
           ./gradlew build sonar --info -Djwt.secret=$JWT_SECRET -Djwt.expiration=$JWT_EXPIRATION \
           -Dmember.service.url=$MEMBER_SERVICE_URL \
           -Dreceipt.service.url=$RECEIPT_SERVICE_URL
