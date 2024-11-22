@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableFeignClients
 public class AuctionServiceServerApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(AuctionServiceServerApplication.class, args);
     }
