@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "member-service", url = "http://localhost:7070")
+@FeignClient(name = "member-service", url = "${member-service.url}")
 public interface MemberFeignClient {
 
     @PostMapping("/members/points/transfer")

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.indoles.autionserviceserver.core.auction.domain.Auction;
 import org.indoles.autionserviceserver.core.auction.domain.enums.ReceiptStatus;
-import org.indoles.autionserviceserver.core.auction.domain.enums.Role;
 import org.indoles.autionserviceserver.core.auction.dto.Request.*;
 import org.indoles.autionserviceserver.core.auction.dto.Response.*;
 import org.indoles.autionserviceserver.core.auction.infra.AuctionCoreRepository;
@@ -117,9 +116,9 @@ public class BuyerService {
 
 
     /**
-     * 경매 목록을 조회하는 서비스 로직(판매자용)
+     * 경매 목록을 조회하는 서비스 로직
      *
-     * @param condition return 판매자용 경매 정보
+     * @param condition return
      */
 
     public List<BuyerAuctionSimpleInfoResponse> getBuyerAuctionSimpleInfos(AuctionSearchConditionRequest condition) {
@@ -134,7 +133,7 @@ public class BuyerService {
     }
 
     /**
-     * 구매한 경매에 대해 상세 조회하는 서비스 로직(구매자용)
+     * 경매에 대해 상세 조회하는 서비스 로직
      *
      * @param auctionId return 구매자용 경매 정보
      */

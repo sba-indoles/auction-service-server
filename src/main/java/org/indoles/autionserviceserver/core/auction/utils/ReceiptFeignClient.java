@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@FeignClient(name = "receipt-service", url = "http://localhost:9090")
+@FeignClient(name = "receipt-service", url = "${receipt-service.url}")
 public interface ReceiptFeignClient {
 
     @PostMapping("/receipts/create")
