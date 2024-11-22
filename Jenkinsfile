@@ -20,9 +20,39 @@ pipeline {
         stage('Modify application.yml') {
             steps {
                 script {
-                    sh '''
-                    echo "aws:\n  paramstore:\n    enabled: true\n    prefix: /auction" > src/main/resources/application.yml
-                    '''
+                    writeFile file: 'src/main/resources/application.yml', text: '''\
+
+server:
+  port: ${PORT}
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: off
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+  header: Authorization
+  prefix: Bearer
+  type: JWT
+'''
                 }
             }
         }
