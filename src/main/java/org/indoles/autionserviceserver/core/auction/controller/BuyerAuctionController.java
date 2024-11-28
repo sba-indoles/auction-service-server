@@ -6,8 +6,6 @@ import org.indoles.autionserviceserver.core.auction.controller.currentTime.Curre
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.Buyer;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.Login;
 import org.indoles.autionserviceserver.core.auction.controller.interfaces.PublicAccess;
-import org.indoles.autionserviceserver.core.auction.controller.interfaces.Roles;
-import org.indoles.autionserviceserver.core.auction.domain.enums.Role;
 import org.indoles.autionserviceserver.core.auction.dto.Request.*;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionInfoResponse;
 import org.indoles.autionserviceserver.core.auction.dto.Response.BuyerAuctionSimpleInfoResponse;

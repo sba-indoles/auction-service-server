@@ -1,12 +1,11 @@
 package org.indoles.autionserviceserver.core.auction.utils;
 
-import org.indoles.autionserviceserver.core.auction.dto.Request.CreateReceiptRequest;
+import org.indoles.autionserviceserver.core.auction.dto.Request.CreateReceiptRequestWrapper;
+import org.indoles.autionserviceserver.core.auction.dto.Request.SignInfoRequest;
 import org.indoles.autionserviceserver.core.auction.dto.Response.ReceiptInfoResponse;
-import org.indoles.autionserviceserver.core.auction.dto.Response.TransactionInfoResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @FeignClient(name = "receipt-service", url = "${receipt-service.url}")
@@ -14,19 +13,17 @@ public interface ReceiptFeignClient {
 
     @PostMapping("/receipts/create")
     void createReceipt(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestBody CreateReceiptRequest request
-    );
+            @RequestBody CreateReceiptRequestWrapper createReceiptRequestWrapper
+            );
 
     @GetMapping("/receipts/find/{receiptId}")
     ReceiptInfoResponse getReceiptById(
-            @RequestHeader("Authorization") String authorizationHeader,
             @PathVariable("receiptId") UUID receiptId
     );
 
     @PutMapping("/receipts/refund/{receiptId}")
     void refundReceipt(
-            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestBody SignInfoRequest signInfoRequest,
             @PathVariable("receiptId") UUID receiptId
     );
 }

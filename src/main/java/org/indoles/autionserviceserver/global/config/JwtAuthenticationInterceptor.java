@@ -27,6 +27,15 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        if (request.getRequestURI().equals("/members/points/transfer") ||
+                request.getRequestURI().equals("/members/points/refund") ||
+                request.getRequestURI().equals("/receipts/create") ||
+                request.getRequestURI().equals("/receipts/find/") ||
+                request.getRequestURI().equals("/receipts/refund/"))
+        {
+            return true;
+        }
+
         if (handler instanceof ResourceHttpRequestHandler || CorsUtils.isPreFlightRequest(request)) {
             return true;
         }
