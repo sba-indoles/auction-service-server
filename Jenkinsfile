@@ -27,7 +27,7 @@ server:
 
 spring:
   datasource:
-    url: ${DB_URL}
+    url: ${DB_AUCTION_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
