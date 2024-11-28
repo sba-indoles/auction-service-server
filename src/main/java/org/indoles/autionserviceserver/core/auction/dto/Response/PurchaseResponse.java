@@ -4,10 +4,10 @@ import java.util.UUID;
 
 /**
  * 구매 응답
- * @param receiptId
+ * @param purchaseId
  */
 
 public record PurchaseResponse(
-        UUID receiptId
+        UUID purchaseId
 ) {
 }

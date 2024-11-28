@@ -25,21 +25,6 @@ public class JwtTokenProvider {
         log.debug("Encoded secret key: {}", secretKey);
     }
 
-    public String createAccessToken(SignInfoRequest signInfoRequest) {
-        Claims claims = Jwts.claims().setSubject(signInfoRequest.id().toString());
-        claims.put("role", signInfoRequest.role().name());
-        Date now = new Date();
-
-        String token = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + expiration))
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
-                .compact();
-        log.debug("Generated Access Token: {}", token);
-        return token;
-    }
-
     public SignInfoRequest getSignInInfoFromToken(String token) {
         try {
             Claims claims = Jwts.parser().setSigningKey(secretKey.getBytes()).parseClaimsJws(token).getBody();

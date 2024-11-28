@@ -13,7 +13,6 @@ import org.indoles.autionserviceserver.global.dto.AuctionPurchaseRequestMessage;
 import org.indoles.autionserviceserver.global.exception.BadRequestException;
 import org.indoles.autionserviceserver.global.exception.ErrorCode;
 import org.indoles.autionserviceserver.global.exception.NotFoundException;
-import org.indoles.autionserviceserver.global.util.JwtTokenProvider;
 import org.indoles.autionserviceserver.global.util.Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,6 @@ public class BuyerService {
 
     private final AuctionCoreRepository auctionCoreRepository;
     private final MemberFeignClient memberFeignClient;
-    private final JwtTokenProvider jwtTokenProvider;
     private final ReceiptFeignClient receiptFeignClient;
 
     /**
@@ -52,9 +50,9 @@ public class BuyerService {
 
         TransferPointRequest transferRequest = new TransferPointRequest(sellerId, totalAmount);
 
-        String token = jwtTokenProvider.createAccessToken(buyerInfo);
+        TransferPointRequestWrapper requestWrapper = new TransferPointRequestWrapper(buyerInfo, transferRequest);
 
-        TransferPointResponse transferResponse = memberFeignClient.pointTransfer("Bearer " + token, transferRequest);
+        TransferPointResponse transferResponse = memberFeignClient.pointTransfer(requestWrapper);
 
         if (transferResponse == null || transferResponse.remainingPoints() < 0) {
             log.error("포인트 전송 실패: {}", transferRequest);
@@ -72,8 +70,10 @@ public class BuyerService {
                 .auctionId(message.auctionId())
                 .build();
 
-        receiptFeignClient.createReceipt("Bearer " + token, createReceiptRequest);
+        CreateReceiptRequestWrapper createReceiptRequestWrapper = new CreateReceiptRequestWrapper(buyerInfo, createReceiptRequest);
+        receiptFeignClient.createReceipt(createReceiptRequestWrapper);
     }
+
 
     private Auction findAuctionObject(long auctionId) {
         return auctionCoreRepository.findById(auctionId)
@@ -87,10 +87,7 @@ public class BuyerService {
 
     @Transactional
     public void cancelPurchase(AuctionRefundRequestMessage message) {
-
-        String token = jwtTokenProvider.createAccessToken(message.buyerInfo());
-
-        ReceiptInfoResponse receiptInfoResponse = receiptFeignClient.getReceiptById("Bearer " + token, message.receiptId());
+        ReceiptInfoResponse receiptInfoResponse = receiptFeignClient.getReceiptById(message.receiptId());
 
         AuctionInfoRequest auction = this.getAuctionForUpdate(receiptInfoResponse.auctionId());
         verifyEndAuction(message.requestTime(), auction.finishedAt());
@@ -102,10 +99,12 @@ public class BuyerService {
                 .amount(receiptInfoResponse.price() * receiptInfoResponse.quantity())
                 .build();
 
-        RefundResponse refundResponse = memberFeignClient.refundPoint("Bearer " + token, refundRequest);
+        RefundPointRequestWrapper requestWrapper = new RefundPointRequestWrapper(message.buyerInfo(), refundRequest);
+
+        RefundResponse refundResponse = memberFeignClient.refundPoint(requestWrapper);
         log.debug("포인트 환불 완료: {}", refundResponse);
 
-        receiptFeignClient.refundReceipt("Bearer " + token, message.receiptId());
+        receiptFeignClient.refundReceipt(message.buyerInfo(), message.receiptId());
     }
 
     public void cacelAuction(long auctionId, long quantity) {
